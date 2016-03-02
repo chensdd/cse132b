@@ -100,17 +100,22 @@
                         // Begin transaction
                         conn.setAutoCommit(false);
                         
-                        // Create the prepared statement and use it to
-                        // DELETE the student FROM the Student table.
-                        PreparedStatement pstmt = conn.prepareStatement(
-                            "DELETE FROM COURSE WHERE COURSE_NUM = ?");
-
+						PreparedStatement pstmt = conn.prepareStatement(
+                            "DELETE FROM OFFERED_BY WHERE COURSE_NUM = ?");
                         pstmt.setInt(
                             1, Integer.parseInt(request.getParameter("COURSE_NUM")));
                         int rowCount = pstmt.executeUpdate();
 
-                        // Commit transaction
-                         conn.commit();
+
+                        pstmt = conn.prepareStatement(
+                            "DELETE FROM COURSE WHERE COURSE_NUM = ?");
+
+                        pstmt.setInt(
+                            1, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                        rowCount = pstmt.executeUpdate();
+
+                        //Commit transaction
+                        conn.commit();
                         conn.setAutoCommit(true);
                     }
             %>

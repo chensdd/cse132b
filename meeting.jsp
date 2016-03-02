@@ -179,13 +179,10 @@
                         // Create the prepared statement and use it to
                         // DELETE the student FROM the Student table.
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "DELETE FROM MEETING WHERE SECTION_ID = ? AND BUILDING = ? AND ROOM = ? AND TIME = ? AND DAY = ?");
+                            "DELETE FROM MEETING WHERE SECTION_ID = ? AND CLASS_TYPE = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("SECTION_ID")));
-						pstmt.setString(2, request.getParameter("BUILDING"));
-                        pstmt.setString(3, request.getParameter("ROOM"));
-						pstmt.setString(4, request.getParameter("TIME"));
-						pstmt.setString(5, request.getParameter("DAY"));
+						pstmt.setString(2, request.getParameter("CLASS_TYPE"));
                         int rowCount = pstmt.executeUpdate();
 
                         //Commit transaction
@@ -451,10 +448,7 @@
                         <form action="meeting.jsp" method="get">
                             <input type="hidden" value="delete" name="action">
                             <input type="hidden" value="<%= rs.getString("SECTION_ID") %>" name="SECTION_ID">
-							<input type="hidden" value="<%= rs.getString("BUILDING") %>" name="BUILDING">
-							<input type="hidden" value="<%= rs.getString("ROOM") %>" name="ROOM">
-							<input type="hidden" value="<%= rs.getString("TIME") %>" name="TIME">
-							<input type="hidden" value="<%= rs.getString("DAY") %>" name="DAY">
+							<input type="hidden" value="<%= rs.getString("CLASS_TYPE") %>" name="CLASS_TYPE">
                             <%-- Button --%>
                             <td>
                                 <input type="submit" value="Delete">
