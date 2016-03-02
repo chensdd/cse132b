@@ -33,7 +33,11 @@
                     // Check if an insertion is requested
                     if (action != null && action.equals("choose")) {
 						
-                        conn.setAutoCommit(false);                       
+                        conn.setAutoCommit(false);  
+
+						PreparedStatement empty = conn.prepareStatement("DELETE FROM S_TEMP");
+						empty.executeUpdate();
+						conn.commit();						
 					
 						PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM STUDENT WHERE SSN = ?");
 						pstmt.setInt(1, Integer.parseInt(request.getParameter("SSN_NUM")));
@@ -45,31 +49,89 @@
 						if(rs.next())
 							id = rs.getInt(1);
 						
-						pstmt = conn.prepareStatement("SELECT * FROM TAKES WHERE STUDENT_ID = ?");
+						//get Section_ID and Class_type from TAKES table for that particular student
+						pstmt = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE FROM TAKES WHERE STUDENT_ID = ?");
 						pstmt.setInt(1, id);
-						rs = pstmt.executeQuery();											
-            %>
-			<table border="0"><th><font face = "Arial Black" size = "6">STUDENT <%= request.getParameter("SSN_NUM")%></font></th></table>
-                <table border="1">
-				<%
-                    // Iterate over the ResultSet        
-                    while ( rs.next() ) {      
-				%>
-						<tr>
-							<td align="middle">
-									<input value="<%= rs.getInt("STUDENT_ID") %>" 
-										name="STUDENT_ID" size="10" readonly>
-							</td>
-							<td align="middle">
-									<input value="<%= rs.getInt("SECTION_ID") %>" 
-										name="SECTION_ID" size="10" readonly>
-							</td>
-							<td align="middle">
-									<input value="<%= rs.getString("CLASS_TYPE") %>" 
-										name="CLASS_TYPE" size="10" readonly>
-							</td>
-						</tr>
-				<%				
+						rs = pstmt.executeQuery();
+						%>
+						<table border="0"><th><font face = "Arial Black" size = "6">STUDENT <%= request.getParameter("SSN_NUM")%></font></th></table>
+						<%
+						//get each section info from MEETING table
+						while(rs.next()){
+							//get all the sections that this student is taking in the corrent quarter
+							PreparedStatement stemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE SECTION_ID = ? AND CLASS_TYPE = ?");
+						    stemp.setInt(1, rs.getInt("SECTION_ID"));
+							stemp.setString(2, rs.getString("CLASS_TYPE"));
+							ResultSet stempRS = stemp.executeQuery();
+							
+							int takeSecID = rs.getInt("SECTION_ID");
+							//loop through each class that the student is taking in the corrent quarter
+							while (stempRS.next()) { 
+								//get the start hour and end hour; if PM then add 12
+								int sh = stempRS.getInt("START_H");
+								int eh = stempRS.getInt("END_H");
+								if(stempRS.getString("START_AMPM").equals("PM"))
+									sh = sh + 12;
+								if(stempRS.getString("END_AMPM").equals("PM"))
+									eh = eh + 12;
+								
+								//check day by day
+								if(stempRS.getString("MONDAY") != null){
+									Statement statement = conn.createStatement();
+									ResultSet dayQ_rs = statement.executeQuery("SELECT SECTION_ID, CLASS_TYPE, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE MONDAY = 'M'");
+									
+									//loop through all courses offered in the day specified
+									while(dayQ_rs.next()){
+										//get the start hour and end hour; if PM then add 12
+										int check_sh = dayQ_rs.getInt("START_H");
+										int check_eh = dayQ_rs.getInt("END_H");
+										if(dayQ_rs.getString("START_AMPM").equals("PM"))
+											check_sh = check_sh + 12;
+										if(dayQ_rs.getString("END_AMPM").equals("PM"))
+											check_eh = check_eh + 12;
+										
+										//check whether time conflicts, add the conflits ones to the s_temp table
+										if(sh >= check_sh && sh <= check_eh){
+											//conflict
+											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+											query.executeUpdate();
+											conn.commit();
+										}
+										else if(eh >= check_sh && eh <= check_eh){
+											//conflict
+											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+											query.executeUpdate();
+											conn.commit();
+										}										
+									}
+									statement.close();
+									dayQ_rs.close();
+								}
+							}
+						%>
+						
+						<table border="1">
+						<%
+							Statement stemp_statement = conn.createStatement();                   
+							ResultSet stemp_rs = stemp_statement.executeQuery("SELECT * FROM S_TEMP");
+						
+							while (stemp_rs.next()) {      
+						%>
+								<tr>
+									<td align="middle">
+											<input value="<%= stemp_rs.getInt("SECTION_ID") %>" 
+												name="tempSECTION_ID" size="10" readonly>
+									</td>
+								</tr>
+						<%
+							}
+						%>
+						</Table>
+				
+				<%		
+							stempRS.close();
 						}
 						rs.close();
 						//Commit transaction
