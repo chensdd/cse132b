@@ -164,7 +164,7 @@
 								<td align="middle">
 								<% 
 									String units = "";
-									if(rs.getString("CLASS_TYPE").equals("LEC"))
+									if(rs.getString("CLASS_TYPE").contains("LEC"))
 										units = rs.getString("UNITS_MIN") + " - " + rs.getString("UNITS_MAX");
 									else
 										units = "--";

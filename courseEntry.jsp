@@ -47,19 +47,24 @@
 						//out.print(value);
 						if(value.equals("Enroll")){
 							PreparedStatement pstmt = conn.prepareStatement(
-                            "INSERT INTO ENROLL VALUES (?, ?)");
-
-							pstmt.setInt(1, Integer.parseInt(request.getParameter("STU_ID")));
-							pstmt.setInt(2, Integer.parseInt(request.getParameter("SEC_ID")));
+                            "INSERT INTO TAKES VALUES (?, ?, ?, ?, ?)");
+							pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENT_ID")));
+							pstmt.setInt(2, Integer.parseInt(request.getParameter("SECTION_ID")));
+							pstmt.setString(3, request.getParameter("grade_opt"));
+							pstmt.setInt(4, Integer.parseInt(request.getParameter("units_list")));
+							pstmt.setString(5, request.getParameter("CLASS_TYPE"));
 							int rowCount = pstmt.executeUpdate();
 						}
 						else{
 							PreparedStatement pstmt = conn.prepareStatement(
-                            "INSERT INTO WAITLISTED_FOR VALUES (?, ?)");
+                            "INSERT INTO WAITLISTED_FOR VALUES (?, ?, ?, ?, ?)");
 
-							pstmt.setInt(1, Integer.parseInt(request.getParameter("STU_ID")));
-							pstmt.setInt(2, Integer.parseInt(request.getParameter("SEC_ID")));
-							int rowCount = pstmt.executeUpdate();						
+							pstmt.setInt(1, Integer.parseInt(request.getParameter("STUDENT_ID")));
+							pstmt.setInt(2, Integer.parseInt(request.getParameter("SECTION_ID")));
+							pstmt.setString(3, request.getParameter("grade_opt"));
+							pstmt.setInt(4, Integer.parseInt(request.getParameter("units_list")));
+							pstmt.setString(5, request.getParameter("CLASS_TYPE"));
+							int rowCount = pstmt.executeUpdate();					
 						}
                         
 
@@ -118,7 +123,7 @@
                     //Create the statement
                     //Statement statement = conn.createStatement();
 					  
-                      PreparedStatement query = conn.prepareStatement("SELECT DISTINCT ENROLL.STD_ID, ENROLL.SECTION_ID, COURSE.TITLE, COURSE.GRADE_OPT, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX, SECTION.CLASS_SIZE FROM ENROLL INNER JOIN (COURSE INNER JOIN SECTION ON COURSE.COURSE_NUM = SECTION.COURSE_NUM) ON ENROLL.SECTION_ID = SECTION.SECTION_ID");
+                      PreparedStatement query = conn.prepareStatement("SELECT DISTINCT ENROLL.STD_ID, ENROLL.SECTION_ID, COURSE.TITLE, COURSE.GRADE_OPT, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX, SECTION.CLASS_SIZE, MEETING.CLASS_TYPE FROM ENROLL INNER JOIN (COURSE INNER JOIN (SECTION INNER JOIN MEETING ON SECTION.SECTION_ID = MEETING.SECTION_ID) ON COURSE.COURSE_NUM = SECTION.COURSE_NUM) ON ENROLL.SECTION_ID = SECTION.SECTION_ID");
 					  ResultSet rs = query.executeQuery();
             %>
 
@@ -150,6 +155,7 @@
                     <tr>
                         <th>Student ID</th>
 						<th>Section ID</th>
+						<th>Class Type</th>
                         <th>Title</th>
                         <th>Grade Option</th>
 			            <th>Lab</th>
@@ -169,17 +175,22 @@
 						
                             <td align="middle">
                                 <input value="<%= rs.getInt("STD_ID") %>" 
-                                    name="STD_ID" size="10" readonly>
+                                    name="STUDENT_ID" size="10" readonly>
                             </td>
 							
 							<td align="middle">
                                 <input value="<%= rs.getString("SECTION_ID") %>" 
                                     name="SECTION_ID" size="10" readonly>
                             </td>
+							
+							<td align="middle">
+                                <input value="<%= rs.getString("CLASS_TYPE") %>" 
+                                    name="CLASS_TYPE" size="6" style="text-align:center;" readonly>
+                            </td>
 
                             <td align="middle">
                                 <input value="<%= rs.getString("TITLE") %>" 
-                                    name="TITLE" size="20" readonly>
+                                    name="TITLE" size="10" style="text-align:center;" readonly>
                             </td>
     
                             <td align="middle">
@@ -203,13 +214,17 @@
     
                             <td align="middle">
                                 <input value="<%= rs.getString("LAB_REQ") %>" 
-                                    name="LAB_REQ" size="4" readonly >
+                                    name="LAB_REQ" size="4" style="text-align:center;" readonly >
                             </td>
 
 							<td align="middle">
 							<% 
-								int min = rs.getInt("UNITS_MIN");
-								int max = rs.getInt("UNITS_MAX");
+								int min = 0;
+								int max = 0;
+								if(rs.getString("CLASS_TYPE").contains("LEC")){
+									min = rs.getInt("UNITS_MIN");
+								    max = rs.getInt("UNITS_MAX");
+								}
 							%>
 								<select name="units_list">
 							<%
@@ -224,17 +239,21 @@
 							
 							<td align="middle">
 							<%
-								int secID = rs.getInt("SECTION_ID");
-								PreparedStatement cntQuery = conn.prepareStatement("SELECT COUNT(STUDENT_ID) FROM TAKES WHERE SECTION_ID = ?");
-								cntQuery.setInt(1, secID);
-								ResultSet cntRs = cntQuery.executeQuery();
-								int seats = 0;
-								if(cntRs.next())
-									seats = cntRs.getInt(1);
-								int size = rs.getInt("CLASS_SIZE");
+								String maxSize = "--";
+								if(rs.getString("CLASS_TYPE").contains("LEC")){
+									int secID = rs.getInt("SECTION_ID");
+									PreparedStatement cntQuery = conn.prepareStatement("SELECT COUNT(STUDENT_ID) FROM TAKES WHERE SECTION_ID = ?");
+									cntQuery.setInt(1, secID);
+									ResultSet cntRs = cntQuery.executeQuery();
+									int seats = 0;
+									if(cntRs.next())
+										seats = cntRs.getInt(1);
+									int size = rs.getInt("CLASS_SIZE");
+									maxSize = seats + "/" + size;
+								}
 							%>
-								<input value="<%=seats%>/<%=size%>" 
-                                    name="SEATS" size="5" readonly>
+								<input value="<%= maxSize%>" 
+                                    name="SEATS" size="5" style="text-align:center;" readonly>
 							</td>
 							<%-- Button --%>
                             <td>
