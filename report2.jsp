@@ -40,7 +40,7 @@
                         // Create the prepared statement and use it to
                         // INSERT the faculty attributes INTO the FACULTY table.
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "INSERT INTO MEETING VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "INSERT INTO MEETING VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 						
 						//String checkedValue = "";	
 						//String[] days = request.getParameterValues("day_list");
@@ -104,19 +104,6 @@
 						pstmt.setInt(21, Integer.parseInt(request.getParameter("endMonth_list")));
 						pstmt.setInt(22, Integer.parseInt(request.getParameter("endDay_list")));
 						
-						String classType = request.getParameter("classType_list");
-						int secID = Integer.parseInt(request.getParameter("SECTION_ID"));
-						PreparedStatement cntQuery = conn.prepareStatement("SELECT COUNT(SECTION_ID) FROM MEETING WHERE SECTION_ID = ? AND CLASS_TYPE LIKE ?");
-						cntQuery.setInt(1, secID);
-						cntQuery.setString(2, classType+"%");
-						ResultSet cntRs = cntQuery.executeQuery();
-						int cnt = 0;
-						if(cntRs.next())
-							cnt = cntRs.getInt(1);
-						cnt = cnt + 1;
-						classType = classType + "" + cnt;
-						pstmt.setString(23, classType);
-						
                         int rowCount = pstmt.executeUpdate();
 
                         //Commit transaction
@@ -135,31 +122,20 @@
                                              
 						int smth = 0;
 						PreparedStatement mq = conn.prepareStatement("SELECT M_INT FROM CALENDER_MONTH WHERE M_STRING = ?");
-						mq.setString(1, request.getParameter("START_MONTH"));
+						mq.setString(1, request.getParameter("start_month"));
 						ResultSet mRs = mq.executeQuery();
 						if(mRs.next())
 							smth = mRs.getInt(1);
-						int emth = 0;
-						mq = conn.prepareStatement("SELECT M_INT FROM CALENDER_MONTH WHERE M_STRING = ?");
-						mq.setString(1, request.getParameter("END_MONTH"));
-						mRs = mq.executeQuery();
-						if(mRs.next())
-							emth = mRs.getInt(1);
 						
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "UPDATE MEETING SET MANDATORY = ?, TYPE = ?, START_MONTH = ?, START_DAY = ?, END_MONTH = ?, END_DAY = ? WHERE SECTION_ID = ? AND BUILDING = ? AND ROOM = ? AND TIME = ? ");
-						//out.println(emth);
+                            "UPDATE MEETING SET MANDATORY = ?, TYPE = ? WHERE SECTION_ID = ? AND BUILDING = ? AND ROOM = ? AND TIME = ?");
 
                         pstmt.setString(1, request.getParameter("MANDATORY"));
-                        pstmt.setString(2, request.getParameter("TYPE"));   
-						pstmt.setInt(3, smth);  
-						pstmt.setInt(4, Integer.parseInt(request.getParameter("START_DAY")));  
-						pstmt.setInt(5, emth);  
-						pstmt.setInt(6, Integer.parseInt(request.getParameter("END_DAY")));  
-                        pstmt.setInt(7, Integer.parseInt(request.getParameter("SECTION_ID")));
-						pstmt.setString(8, request.getParameter("BUILDING"));
-                        pstmt.setString(9, request.getParameter("ROOM"));
-						pstmt.setString(10, request.getParameter("TIME"));
+                        pstmt.setString(2, request.getParameter("TYPE"));                       
+                        pstmt.setInt(3, Integer.parseInt(request.getParameter("SECTION_ID")));
+						pstmt.setString(4, request.getParameter("BUILDING"));
+                        pstmt.setString(5, request.getParameter("ROOM"));
+						pstmt.setString(6, request.getParameter("TIME"));
                         int rowCount = pstmt.executeUpdate();
 
                         //Commit transaction
@@ -212,7 +188,6 @@
                 <table border="1">
                     <tr>
                         <th>Section ID</th>
-						<th>Class Type</th>
                         <th>Building</th>
 						<th>Room</th>
 						<th colspan="4">Start Time</th>
@@ -228,13 +203,6 @@
                         <form action="meeting.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value = "" name="SECTION_ID" size="10"></th>
-							<th><name="CLASS_TYPE" size="5">
-							<select name = "classType_list">
-							<option>LEC</option>
-							<option>DIS</option>
-							<option>LAB</option>
-							</select></th>
-							</th>
                             <th><input value = "" name="BUILDING" size="15"></th>
 							<th><input value = "" name="ROOM" size="10"></th>
 							
@@ -263,7 +231,7 @@
 							<th style="border:thin; border-right: thin solid;"><select name = "start_ampm">
 							<option>AM</option>
 							<option>PM</option>
-							</select></th>
+							</th>
 							<th style="border:thin; border-left: thin solid;"><select name = "end_h">
 							<%
 								hr = 1;
@@ -373,11 +341,6 @@
                                 <input value="<%= rs.getInt("SECTION_ID") %>" 
                                     name="SECTION_ID" size="10" readonly>
                             </td>
-							
-							<td align="middle">
-                                <input value="<%= rs.getString("CLASS_TYPE") %>" 
-                                    name="CLASS_TYPE" size="5" style="text-align:center;" readonly>
-                            </td>
 
                             <td align="middle">
                                 <input value="<%= rs.getString("BUILDING") %>" 
@@ -389,10 +352,55 @@
                                     name="ROOM" size="10">
                             </td>
 							
-							<td align="middle" colspan="8">
-                                <input value="<%= rs.getString("TIME") %>" 
-                                    name="TIME" size="40" style="text-align:center;" readonly>
-                            </td>						
+							<td align="middle">
+								<%	int sh = rs.getInt("START_H"); 
+									String s_sh = "" + sh;
+									if(sh < 10)
+										s_sh = "0" + sh;
+								%>
+                                <input value="<%= s_sh%>" 
+                                    name="START_H" size="2" style="text-align:center;">
+                            </td>
+							<td style="border:thin">:</td>
+							<td align="middle">
+								<%	int sm = rs.getInt("START_M"); 
+									String s_sm = "" + sm;
+									if(sm < 10)
+										s_sm = "0" + sm;
+								%>
+                                <input value="<%= s_sm%>" 
+                                    name="START_M" size="2" style="text-align:center;">
+                            </td>
+							<td align="middle">
+                                <input value="<%= rs.getString("START_AMPM") %>" 
+                                    name="START_AMPM" size="2" style="text-align:center;">
+                            </td>
+							
+							<td align="middle">
+								<%	int eh = rs.getInt("END_H"); 
+									String s_eh = "" + eh;
+									if(eh < 10)
+										s_eh = "0" + eh;
+								%>
+                                <input value="<%= s_eh%>" 
+                                    name="END_H" size="2" style="text-align:center;">
+                            </td>
+							<th style="border:thin">:</th>
+							<td align="middle">
+								<%	int em = rs.getInt("END_M"); 
+									String s_em = "" + em;
+									if(em < 10)
+										s_em = "0" + em;
+								%>
+                                <input value="<%= s_em%>" 
+                                    name="END_M" size="2" style="text-align:center;">
+                            </td>
+							<td align="middle">
+                                <input value="<%= rs.getString("END_AMPM") %>" 
+                                    name="END_AMPM" size="2" style="text-align:center;">
+                            </td>
+							
+							
 							
 							<td align="middle" colspan="5">
                                 <input value="<%= rs.getString("DAY") %>" 
@@ -406,7 +414,7 @@
 							
 							<td align="middle">
                                 <input value="<%= rs.getString("TYPE") %>" 
-                                    name="TYPE" size="8" style="text-align:center;">
+                                    name="TYPE" size="4" style="text-align:center;">
                             </td>
 							
 							<td align="middle">
@@ -419,11 +427,11 @@
 									s_mth = mRs.getString(1);
 							%>
                                 <input value="<%= s_mth%>" 
-                                    name="START_MONTH" size="10" style="text-align:center;">
+                                    name="start_month" size="10" style="text-align:center;">
                             </td>
 							<td align="middle">
                                 <input value="<%= rs.getInt("START_DAY")%>" 
-                                    name="START_DAY" size="2" style="text-align:center;">
+                                    name="start_day" size="2" style="text-align:center;">
                             </td>
 							
 							<td align="middle">
@@ -436,11 +444,11 @@
 									e_mth = mRs.getString(1);
 							%>
                                 <input value="<%= e_mth%>" 
-                                    name="END_MONTH" size="10" style="text-align:center;">
+                                    name="end_month" size="10" style="text-align:center;">
                             </td>
 							<td align="middle">
                                 <input value="<%= rs.getInt("END_DAY")%>" 
-                                    name="END_DAY" size="2" style="text-align:center;">
+                                    name="end_day" size="2" style="text-align:center;">
                             </td>
 							
 							<%-- Button --%>

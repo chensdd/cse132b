@@ -166,11 +166,10 @@
                     <tr>  
 						<form action="courseEntry.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
-							
-                            <%-- Get the COURSE_NUM, which is a number --%>							
+						
                             <td align="middle">
                                 <input value="<%= rs.getInt("STD_ID") %>" 
-                                    name="COURSE_NUM" size="10" readonly>
+                                    name="STD_ID" size="10" readonly>
                             </td>
 							
 							<td align="middle">
