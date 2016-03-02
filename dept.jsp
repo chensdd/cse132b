@@ -45,8 +45,8 @@
                         pstmt.setString(2, request.getParameter("MIN_GPA"));
                         pstmt.setString(3, request.getParameter("MAJ_UNIT_UPDIV"));
                         pstmt.setString(4, request.getParameter("MAJ_UNIT_LOWDIV"));
-                        pstmt.setString(5, request.getParameter("MIN_UNIT_UPDIV"));
-                        pstmt.setString(6, request.getParameter("MIN_UNIT_LOWDIV"));
+                        pstmt.setString(5, request.getParameter("ELECTIVE"));
+                        pstmt.setString(6, request.getParameter("GRAD_UNIT"));
                         int rowCount = pstmt.executeUpdate();
 
                         // Commit transaction
@@ -67,12 +67,12 @@
                         // UPDATE the faculty attributes in the FACULTY table.
                         PreparedStatement pstmt = conn.prepareStatement(
                             "UPDATE DEPARTMENT SET MIN_GPA = ?, MAJ_UNIT_UPDIV = ?, MAJ_UNIT_LOWDIV = ?, "+
-                            "MIN_UNIT_UPDIV = ?, MIN_UNIT_LOWDIV = ? WHERE DEPT_NAME = ?");
+                            "ELECTIVE = ?, GRAD_UNIT = ? WHERE DEPT_NAME = ?");
                         pstmt.setString(1, request.getParameter("MIN_GPA"));
                         pstmt.setString(2, request.getParameter("MAJ_UNIT_UPDIV"));
                         pstmt.setString(3, request.getParameter("MAJ_UNIT_LOWDIV"));
-                        pstmt.setString(4, request.getParameter("MIN_UNIT_UPDIV"));
-                        pstmt.setString(5, request.getParameter("MIN_UNIT_LOWDIV"));
+                        pstmt.setString(4, request.getParameter("ELECTIVE"));
+                        pstmt.setString(5, request.getParameter("GRAD_UNIT"));
                         pstmt.setString(6, request.getParameter("DEPT_NAME"));
                         int rowCount = pstmt.executeUpdate();
 
@@ -130,8 +130,8 @@
                         <th>Minimum GPA</th>
                         <th>Major Units (Upper)</th>
                         <th>Major Units (Lower)</th>
-                        <th>Minor Units (Upper)</th>
-                        <th>Minor Units (Lower)</th>
+                        <th>Tech Elective Unit</th>
+                        <th>Grad Units in Major</th>
                     </tr>
                     <tr>
                         <form action="dept.jsp" method="get">
@@ -140,8 +140,8 @@
                             <th><input value="" name="MIN_GPA" size="5"></th>
                             <th><input value="" name="MAJ_UNIT_UPDIV" size="5"></th>
                             <th><input value="" name="MAJ_UNIT_LOWDIV" size="5"></th>
-                            <th><input value="" name="MIN_UNIT_UPDIV" size="5"></th>
-                            <th><input value="" name="MIN_UNIT_LOWDIV" size="5"></th>
+                            <th><input value="" name="ELECTIVE" size="5"></th>
+                            <th><input value="" name="GRAD_UNIT" size="5"></th>
                             <th><input type="submit" value="Insert"></th>
                         </form>
                     </tr>           
@@ -162,28 +162,28 @@
                             </td>
     
                             <td align="middle">
-                                <input value="<%= rs.getInt("MIN_GPA") %>"
-                                    name="MIN_GPA" size="5">
+                                <input value="<%= rs.getString("MIN_GPA") %>"
+                                    name="MIN_GPA" style="text-align:center;" size="5">
                             </td>
                             
                             <td align="middle">
                                 <input value="<%= rs.getString("MAJ_UNIT_UPDIV") %>"
-                                    name="MAJ_UNIT_UPDIV" size="5">
+                                    name="MAJ_UNIT_UPDIV" style="text-align:center;" size="5">
                             </td>
                             
                             <td align="middle">
                                 <input value="<%= rs.getString("MAJ_UNIT_LOWDIV") %>"
-                                    name="MAJ_UNIT_LOWDIV" size="5">
+                                    name="MAJ_UNIT_LOWDIV" style="text-align:center;" size="5">
                             </td>
                             
                             <td align="middle">
-                                <input value="<%= rs.getString("MIN_UNIT_UPDIV") %>"
-                                    name="MIN_UNIT_UPDIV" size="5">
+                                <input value="<%= rs.getString("ELECTIVE") %>"
+                                    name="ELECTIVE" style="text-align:center;" size="5">
                             </td>
                         
                             <td align="middle">
-                                <input value="<%= rs.getString("MIN_UNIT_LOWDIV") %>"
-                                    name="MIN_UNIT_LOWDIV" size="5">
+                                <input value="<%= rs.getString("GRAD_UNIT") %>"
+                                    name="GRAD_UNIT" style="text-align:center;" size="5">
                             </td>
     
                             <%-- Button --%>

@@ -94,7 +94,7 @@
     
                             <td align="middle">
                                 <input value="<%= rs.getString("G_STATUS") %>" 
-                                    name="G_STATUS" size="20" readonly>
+                                    name="G_STATUS" size="10" style="text-align:center;" readonly>
                             </td>
     
 							<td align="middle">

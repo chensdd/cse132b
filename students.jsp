@@ -218,7 +218,7 @@
 							<th><input value="" name="MIDDLENAME" size="15"></th>
                             <th><input value="" name="LASTNAME" size="15"></th>
                             <th><input value="" name="RESIDENCY" size="10"></th>
-							<th><name="STU_STATUS" size="20">
+							<th><name="STU_STATUS" size="10">
 							<select name = "status_list">
 							  <option value="Undergrad">Undergrad</option>
 							  <option value="MS">MS</option>
@@ -277,13 +277,13 @@
                             <%-- Get the RESIDENCY --%>
                             <td align="middle">
                                 <input value="<%= rs.getString("RESIDENCY") %>" 
-                                    name="RESIDENCY" size="10">
+                                    name="RESIDENCY" style="text-align:center;" size="10">
                             </td>
 							
 							<%-- Get the STATUS --%>
                             <td align="middle">
                                 <input value="<%= rs.getString("STU_STATUS") %>" 
-                                    name="STU_STATUS" size="20">
+                                    name="STU_STATUS" style="text-align:center;" size="15">
                             </td>
 							
 							<%-- Get the ENROLLMENT --%>

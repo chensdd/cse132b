@@ -39,11 +39,12 @@
                         // Create the prepared statement and use it to
                         // INSERT the course attributes INTO the COURSE table.
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "INSERT INTO CLASS VALUES (?, ?, ?)");
+                            "INSERT INTO CLASS VALUES (?, ?, ?, ?)");
 							
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("COURSE_NUM")));
-                        pstmt.setString(2, request.getParameter("quarter_list"));
-                        pstmt.setInt(3, Integer.parseInt(request.getParameter("YEAR")));
+                        pstmt.setString(1, request.getParameter("COURSE_NUM"));
+						pstmt.setString(2, request.getParameter("TITLE"));
+                        pstmt.setString(3, request.getParameter("quarter_list"));
+                        pstmt.setInt(4, Integer.parseInt(request.getParameter("YEAR")));
                         int rowCount = pstmt.executeUpdate();
 
                         //Commit transaction
@@ -66,11 +67,10 @@
                         PreparedStatement pstmt = conn.prepareStatement(
                             "DELETE FROM CLASS WHERE COURSE_NUM = ? AND QUARTER = ? AND YEAR = ?;");
 
-                        pstmt.setInt(1, Integer.parseInt(request.getParameter("COURSE_NUM")));
-						pstmt.setString(2, request.getParameter("QUARTER"));
+                        pstmt.setString(1, request.getParameter("COURSE_NUM"));
+                        pstmt.setString(2, request.getParameter("QUARTER"));
                         pstmt.setInt(3, Integer.parseInt(request.getParameter("YEAR")));
                         int rowCount = pstmt.executeUpdate();
-
                         //Commit transaction
                         conn.commit();
                         conn.setAutoCommit(true);
@@ -93,6 +93,7 @@
                 <table border="1">
                     <tr>
                         <th>Course No.</th>
+						<th>Title</th>
                         <th>Quarter</th>
                         <th>Year</th>
                         <th>Action</th>
@@ -102,6 +103,7 @@
                         <form action="class.jsp" method="get">
                             <input type="hidden" value="insert" name="action">
                             <th><input value="" name="COURSE_NUM" size="10"></th>
+							<th><input value="" name="TITLE" size="40"></th>
                             <th><name="QUARTER" size="10">
 							<select name = "quarter_list">
 							  <option value="Spring">Spring</option>
@@ -125,19 +127,24 @@
 
                             <%-- Get the COURSE_NUM, which is a number --%>
                             <td align="middle">
-                                <input value="<%= rs.getInt("COURSE_NUM") %>" 
+                                <input value="<%= rs.getString("COURSE_NUM") %>" 
                                     name="QUARTER" size="10" readonly>
+                            </td>
+							
+							<td align="middle">
+                                <input value="<%= rs.getString("TITLE") %>" 
+                                    name="TITLE" size="40" style="text-align:center;" readonly>
                             </td>
 
                             <td align="middle">
                                 <input value="<%= rs.getString("QUARTER") %>" 
-                                    name="GRADE_OPT" size="20">
+                                    name="GRADE_OPT" style="text-align:center;" size="20">
                             </td>
     
                             <%-- Get the COURSE LEVEL --%>
                             <td align="middle">
                                 <input value="<%= rs.getInt("YEAR") %>"
-                                    name="YEAR" size="5">
+                                    name="YEAR" style="text-align:center;" size="5">
                             </td>
                     
                         </form>
@@ -145,7 +152,7 @@
                         <form action="class.jsp" method="get">
                             <input type="hidden" value="delete" name="action">
                             <input type="hidden" 
-                                value="<%= rs.getInt("COURSE_NUM") %>" name="COURSE_NUM">
+                                value="<%= rs.getString("COURSE_NUM") %>" name="COURSE_NUM">
 							<input type="hidden" 
                                 value="<%= rs.getString("QUARTER") %>" name="QUARTER">
 							<input type="hidden" 
