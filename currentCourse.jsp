@@ -36,7 +36,7 @@
 					
                     if (action != null && action.equals("choose")) { 
 						conn.setAutoCommit(false);
-					    PreparedStatement query = conn.prepareStatement("SELECT DISTINCT COURSE.COURSE_NUM, SECTION.SECTION_ID, COURSE.TITLE, COURSE.GRADE_OPT, COURSE.LEVEL, MEETING.BUILDING, MEETING.TIME, MEETING.DAY, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX FROM COURSE INNER JOIN (MEETING INNER JOIN SECTION ON MEETING.SECTION_ID = SECTION.SECTION_ID) ON SECTION.COURSE_NUM = COURSE.COURSE_NUM AND SECTION.YEAR = ? AND SECTION.QUARTER = ?");
+					    PreparedStatement query = conn.prepareStatement("SELECT DISTINCT COURSE.COURSE_NUM, SECTION.SECTION_ID, COURSE.TITLE, COURSE.GRADE_OPT, COURSE.LEVEL, MEETING.BUILDING, MEETING.TIME, MEETING.DAY, MEETING.CLASS_TYPE, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX FROM COURSE INNER JOIN (MEETING INNER JOIN SECTION ON MEETING.SECTION_ID = SECTION.SECTION_ID) ON SECTION.COURSE_NUM = COURSE.COURSE_NUM AND SECTION.YEAR = ? AND SECTION.QUARTER = ?");
 					    query.setInt(1, Integer.parseInt(request.getParameter("YEAR")));
 					    query.setString(2, request.getParameter("quarter_list"));
 					    rs = query.executeQuery();
@@ -93,6 +93,7 @@
                     <tr>
                         <th>Course No.</th>
 						<th>Section ID</th>
+						<th>Class Type</th>
                         <th>Title</th>
                         <th>Grade Option</th>
                         <th>Course Level</th>
@@ -118,6 +119,11 @@
 								<td align="middle">
 									<input value="<%= rs.getString("SECTION_ID") %>" 
 										name="SECTION_ID" size="10" readonly>
+								</td>
+								
+								<td align="middle">
+									<input value="<%= rs.getString("CLASS_TYPE") %>" 
+										name="CLASS_TYPE" size="4" readonly>
 								</td>
 
 								<td align="middle">
@@ -156,7 +162,14 @@
 								</td>
 		
 								<td align="middle">
-									<input value="<%= rs.getString("UNITS_MIN") %> - <%= rs.getString("UNITS_MAX") %>" 
+								<% 
+									String units = "";
+									if(rs.getString("CLASS_TYPE").equals("LEC"))
+										units = rs.getString("UNITS_MIN") + " - " + rs.getString("UNITS_MAX");
+									else
+										units = "--";
+								%>
+									<input value="<%= units%>" 
 										name="UNITS" size="6" style="text-align:center;" readonly>
 								</td>
 						</tr>
