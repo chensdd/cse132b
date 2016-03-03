@@ -36,7 +36,7 @@
 					
                     if (action != null && action.equals("choose")) { 
 						conn.setAutoCommit(false);
-					    PreparedStatement query = conn.prepareStatement("SELECT DISTINCT COURSE.COURSE_NUM, SECTION.SECTION_ID, COURSE.TITLE, COURSE.GRADE_OPT, COURSE.LEVEL, MEETING.BUILDING, MEETING.TIME, MEETING.DAY, MEETING.CLASS_TYPE, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX FROM COURSE INNER JOIN (MEETING INNER JOIN SECTION ON MEETING.SECTION_ID = SECTION.SECTION_ID) ON SECTION.COURSE_NUM = COURSE.COURSE_NUM AND SECTION.YEAR = ? AND SECTION.QUARTER = ?");
+					    PreparedStatement query = conn.prepareStatement("SELECT DISTINCT COURSE.COURSE_NUM, SECTION.SECTION_ID, COURSE.GRADE_OPT, COURSE.LEVEL, MEETING.BUILDING, MEETING.TIME, MEETING.DAY, MEETING.CLASS_TYPE, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX FROM COURSE INNER JOIN (MEETING INNER JOIN SECTION ON MEETING.SECTION_ID = SECTION.SECTION_ID) ON SECTION.COURSE_NUM = COURSE.COURSE_NUM AND SECTION.YEAR = ? AND SECTION.QUARTER = ?");
 					    query.setInt(1, Integer.parseInt(request.getParameter("YEAR")));
 					    query.setString(2, request.getParameter("quarter_list"));
 					    rs = query.executeQuery();
@@ -94,7 +94,6 @@
                         <th>Course No.</th>
 						<th>Section ID</th>
 						<th>Class Type</th>
-                        <th>Title</th>
                         <th>Grade Option</th>
                         <th>Course Level</th>
 						<th>Building</th>
@@ -112,7 +111,7 @@
 						<tr>                      
 								<%-- Get the COURSE_NUM, which is a number --%>							
 								<td align="middle">
-									<input value="<%= rs.getInt("COURSE_NUM") %>" 
+									<input value="<%= rs.getString("COURSE_NUM") %>" 
 										name="COURSE_NUM" size="10" readonly>
 								</td>
 								
@@ -124,11 +123,6 @@
 								<td align="middle">
 									<input value="<%= rs.getString("CLASS_TYPE") %>" 
 										name="CLASS_TYPE" size="4" readonly>
-								</td>
-
-								<td align="middle">
-									<input value="<%= rs.getString("TITLE") %>" 
-										name="TITLE" size="20" readonly>
 								</td>
 		
 								<td align="middle">

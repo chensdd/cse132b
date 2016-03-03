@@ -123,7 +123,7 @@
                     //Create the statement
                     //Statement statement = conn.createStatement();
 					  
-                      PreparedStatement query = conn.prepareStatement("SELECT DISTINCT ENROLL.STD_ID, ENROLL.SECTION_ID, COURSE.TITLE, COURSE.GRADE_OPT, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX, SECTION.CLASS_SIZE, MEETING.CLASS_TYPE FROM ENROLL INNER JOIN (COURSE INNER JOIN (SECTION INNER JOIN MEETING ON SECTION.SECTION_ID = MEETING.SECTION_ID) ON COURSE.COURSE_NUM = SECTION.COURSE_NUM) ON ENROLL.SECTION_ID = SECTION.SECTION_ID");
+                      PreparedStatement query = conn.prepareStatement("SELECT DISTINCT ENROLL.STD_ID, ENROLL.SECTION_ID, COURSE.GRADE_OPT, COURSE.LAB_REQ, COURSE.UNITS_MIN, COURSE.UNITS_MAX, SECTION.CLASS_SIZE, MEETING.CLASS_TYPE FROM ENROLL INNER JOIN (COURSE INNER JOIN (SECTION INNER JOIN MEETING ON SECTION.SECTION_ID = MEETING.SECTION_ID) ON COURSE.COURSE_NUM = SECTION.COURSE_NUM) ON ENROLL.SECTION_ID = SECTION.SECTION_ID");
 					  ResultSet rs = query.executeQuery();
             %>
 
@@ -156,7 +156,6 @@
                         <th>Student ID</th>
 						<th>Section ID</th>
 						<th>Class Type</th>
-                        <th>Title</th>
                         <th>Grade Option</th>
 			            <th>Lab</th>
                         <th>Units</th>
@@ -186,11 +185,6 @@
 							<td align="middle">
                                 <input value="<%= rs.getString("CLASS_TYPE") %>" 
                                     name="CLASS_TYPE" size="6" style="text-align:center;" readonly>
-                            </td>
-
-                            <td align="middle">
-                                <input value="<%= rs.getString("TITLE") %>" 
-                                    name="TITLE" size="10" style="text-align:center;" readonly>
                             </td>
     
                             <td align="middle">

@@ -43,7 +43,7 @@
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("SECTION_ID")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("CLASS_SIZE")));
-                        pstmt.setInt(3, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                        pstmt.setString(3, request.getParameter("COURSE_NUM"));
                         pstmt.setString(4, request.getParameter("FACULTY_NAME"));
 						pstmt.setString(5, request.getParameter("quarter_list"));
 						pstmt.setInt(6, Integer.parseInt(request.getParameter("YEAR")));
@@ -70,7 +70,7 @@
                             "FACULTY_NAME = ? WHERE SECTION_ID = ?");
 
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("CLASS_SIZE")));
-                        pstmt.setInt(2, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                        pstmt.setString(2, request.getParameter("COURSE_NUM"));
                         pstmt.setString(3, request.getParameter("FACULTY_NAME"));
                         pstmt.setInt(4, Integer.parseInt(request.getParameter("SECTION_ID")));
                         int rowCount = pstmt.executeUpdate();

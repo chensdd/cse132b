@@ -321,7 +321,7 @@
 							</select></th>
 							<th style="border:thin; border-right: thin solid;"><select name = "startDay_list">
 							<%
-								for(int i = 1; i < 31; i++){
+								for(int i = 1; i < 32; i++){
 							%>								
 								<option><%=i%></option>
 							<%
@@ -344,7 +344,7 @@
 							</select></th>
 							<th style="border:thin; border-right: thin solid;"><select name = "endDay_list">
 							<%
-								for(int i = 1; i < 31; i++){
+								for(int i = 1; i < 32; i++){
 							%>								
 								<option><%=i%></option>
 							<%
