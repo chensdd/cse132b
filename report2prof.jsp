@@ -440,7 +440,167 @@
 								secondMonth++;
 							}
 						}
-						
+						else if(stMonth.equals("January") && edMonth.equals("March")){	
+							while(stDay <= 31){								
+								PreparedStatement dateQuery = conn.prepareStatement("SELECT DATE FROM CALENDAR WHERE MONTH = ? AND DAY = ?");
+								dateQuery.setString(1, stMonth);
+								dateQuery.setInt(2, stDay);
+								ResultSet dateQuery_rs  = dateQuery.executeQuery();
+								
+								String s_date = "";
+								if(dateQuery_rs.next())
+									s_date = dateQuery_rs.getString("DATE");
+								
+								PreparedStatement conflict = conn.prepareStatement("SELECT DISTINCT REVIEWTIME.DATE, REVIEWTIME.RESERVE_TIME FROM REVIEWTIME WHERE NOT EXISTS (SELECT 1 FROM NOTPOSSIBLE_TEMP WHERE REVIEWTIME.DATE = NOTPOSSIBLE_TEMP.DATE AND REVIEWTIME.RESERVE_TIME = NOTPOSSIBLE_TEMP.TIME) AND REVIEWTIME.DATE = ?");
+								conflict.setString(1, s_date);
+								ResultSet conflict_rs = conflict.executeQuery();
+								%>
+								
+								<table border="0">
+								<%
+								while (conflict_rs.next()) {  
+									//time formate
+									String rtime = "";
+									int rsh = conflict_rs.getInt("RESERVE_TIME");
+									int reh = rsh + 1;
+									String rs_ampm = "AM";
+									String re_ampm = "AM";
+									if(rsh >= 12){
+										if(rsh > 12)
+											rsh = rsh - 12;
+										rs_ampm = "PM";
+									}
+									if(reh >= 12){
+										if(reh > 12)
+											reh = reh - 12;
+										re_ampm = "PM";
+									}
+										
+									rtime = rsh + ":00 " + rs_ampm + " - " + reh + ":00 " + re_ampm;
+								%>
+									<tr>
+										<td>
+										<%= request.getParameter("startMonth_list")%> <%= stDay%> <%= conflict_rs.getString("DATE")%> <%= rtime%>
+										</td>
+									</tr>
+								<%
+								}
+									conflict_rs.close();
+								%>
+								</table>
+								<%
+								dateQuery_rs.close();
+								stDay++;
+							}
+							
+							//Feb which contains 29 days
+							int febDay = 1;
+							String feb = "February";
+							while(febDay <= 29){								
+								PreparedStatement dateQuery = conn.prepareStatement("SELECT DATE FROM CALENDAR WHERE MONTH = ? AND DAY = ?");
+								dateQuery.setString(1, feb);
+								dateQuery.setInt(2, febDay);
+								ResultSet dateQuery_rs  = dateQuery.executeQuery();
+								
+								String s_date = "";
+								if(dateQuery_rs.next())
+									s_date = dateQuery_rs.getString("DATE");
+								
+								PreparedStatement conflict = conn.prepareStatement("SELECT DISTINCT REVIEWTIME.DATE, REVIEWTIME.RESERVE_TIME FROM REVIEWTIME WHERE NOT EXISTS (SELECT 1 FROM NOTPOSSIBLE_TEMP WHERE REVIEWTIME.DATE = NOTPOSSIBLE_TEMP.DATE AND REVIEWTIME.RESERVE_TIME = NOTPOSSIBLE_TEMP.TIME) AND REVIEWTIME.DATE = ?");
+								conflict.setString(1, s_date);
+								ResultSet conflict_rs = conflict.executeQuery();
+								%>
+								
+								<table border="0">
+								<%
+								while (conflict_rs.next()) {  
+									//time formate
+									String rtime = "";
+									int rsh = conflict_rs.getInt("RESERVE_TIME");
+									int reh = rsh + 1;
+									String rs_ampm = "AM";
+									String re_ampm = "AM";
+									if(rsh >= 12){
+										if(rsh > 12)
+											rsh = rsh - 12;
+										rs_ampm = "PM";
+									}
+									if(reh >= 12){
+										if(reh > 12)
+											reh = reh - 12;
+										re_ampm = "PM";
+									}
+										
+									rtime = rsh + ":00 " + rs_ampm + " - " + reh + ":00 " + re_ampm;
+								%>
+									<tr>
+										<td>
+										<%= feb%> <%= febDay%> <%= conflict_rs.getString("DATE")%> <%= rtime%>
+										</td>
+									</tr>
+								<%
+								}
+									conflict_rs.close();
+								%>
+								</table>
+								<%
+								dateQuery_rs.close();
+								febDay++;
+							}
+							
+							int secondMonth = 1;
+							while(secondMonth <= edDay){								
+								PreparedStatement dateQuery = conn.prepareStatement("SELECT DATE FROM CALENDAR WHERE MONTH = ? AND DAY = ?");
+								dateQuery.setString(1, edMonth);
+								dateQuery.setInt(2, secondMonth);
+								ResultSet dateQuery_rs  = dateQuery.executeQuery();
+								
+								String s_date = "";
+								if(dateQuery_rs.next())
+									s_date = dateQuery_rs.getString("DATE");
+								
+								PreparedStatement conflict = conn.prepareStatement("SELECT DISTINCT REVIEWTIME.DATE, REVIEWTIME.RESERVE_TIME FROM REVIEWTIME WHERE NOT EXISTS (SELECT 1 FROM NOTPOSSIBLE_TEMP WHERE REVIEWTIME.DATE = NOTPOSSIBLE_TEMP.DATE AND REVIEWTIME.RESERVE_TIME = NOTPOSSIBLE_TEMP.TIME) AND REVIEWTIME.DATE = ?");
+								conflict.setString(1, s_date);
+								ResultSet conflict_rs = conflict.executeQuery();
+								%>
+								
+								<table border="0">
+								<%
+								while (conflict_rs.next()) {  
+									//time formate
+									String rtime = "";
+									int rsh = conflict_rs.getInt("RESERVE_TIME");
+									int reh = rsh + 1;
+									String rs_ampm = "AM";
+									String re_ampm = "AM";
+									if(rsh >= 12){
+										if(rsh > 12)
+											rsh = rsh - 12;
+										rs_ampm = "PM";
+									}
+									if(reh >= 12){
+										if(reh > 12)
+											reh = reh - 12;
+										re_ampm = "PM";
+									}
+										
+									rtime = rsh + ":00 " + rs_ampm + " - " + reh + ":00 " + re_ampm;
+								%>
+									<tr>
+										<td>
+										<%= request.getParameter("endMonth_list")%> <%= secondMonth%> <%= conflict_rs.getString("DATE")%> <%= rtime%>
+										</td>
+									</tr>
+								<%
+								}
+									conflict_rs.close();
+								%>
+								</table>
+								<%
+								dateQuery_rs.close();
+								secondMonth++;
+							}
+						}
 					//Commit transaction					
 					conn.commit();
 					conn.setAutoCommit(true);				
