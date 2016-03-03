@@ -96,29 +96,12 @@
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
+										//start ends exactly as mine
 										//ends before mine
 										//start after mine
 										//start before mine and ends after mine
-										if(check_eh <= eh && check_em < em){
-											if(check_eh >= sh && check_em >= sm){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh >= sh && check_sm > sm){
-											if(check_sh <= eh && check_sm <= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh <= sh && check_sm < sm){
-											if(check_eh >= eh && check_em > em){
+										if(check_sh == sh && check_sm == sm){
+											if(check_eh == eh && check_em == em){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
@@ -126,8 +109,26 @@
 												conn.commit();
 											}
 										}
-										else if(check_sh == sh && check_sm == sm){
-											if(check_eh == eh && check_em == em){
+										else if(check_eh <= eh){
+											if((check_eh > sh) || (check_eh == sh && check_em > sm)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if(check_sh >= sh){
+											if((check_sh < eh) || (check_sh == eh && check_sm < em)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if((check_sh < sh) || (check_sh == sh && check_sm < sm)){
+											if((check_eh > eh) || (check_eh == eh && check_em > em)){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
@@ -156,37 +157,11 @@
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
+										//start ends exactly as mine
 										//ends before mine
 										//start after mine
 										//start before mine and ends after mine
-										if(check_eh <= eh && check_em < em){
-											if(check_eh >= sh && check_em >= sm){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh >= sh && check_sm > sm){
-											if(check_sh <= eh && check_sm <= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh <= sh && check_sm < sm){
-											if(check_eh >= eh && check_em > em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}
-										}
-										else if(check_sh == sh && check_sm == sm){
+										if(check_sh == sh && check_sm == sm){
 											if(check_eh == eh && check_em == em){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
@@ -194,7 +169,35 @@
 												query.executeUpdate();
 												conn.commit();
 											}
-										}											
+										}
+										else if(check_eh <= eh){
+											if((check_eh > sh) || (check_eh == sh && check_em > sm)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if(check_sh >= sh){
+											if((check_sh < eh) || (check_sh == eh && check_sm < em)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if((check_sh < sh) || (check_sh == sh && check_sm < sm)){
+											if((check_eh > eh) || (check_eh == eh && check_em > em)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}
+										}
+																					
 									}
 									dayQ_rs.close();
 								}
@@ -216,29 +219,13 @@
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
+										//check whether time conflicts, add the conflits ones to the s_temp table
+										//start ends exactly as mine
 										//ends before mine
 										//start after mine
 										//start before mine and ends after mine
-										if(check_eh <= eh && check_em < em){
-											if(check_eh >= sh && check_em >= sm){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh >= sh && check_sm > sm){
-											if(check_sh <= eh && check_sm <= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh <= sh && check_sm < sm){
-											if(check_eh >= eh && check_em > em){
+										if(check_sh == sh && check_sm == sm){
+											if(check_eh == eh && check_em == em){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
@@ -246,8 +233,26 @@
 												conn.commit();
 											}
 										}
-										else if(check_sh == sh && check_sm == sm){
-											if(check_eh == eh && check_em == em){
+										else if(check_eh <= eh){
+											if((check_eh > sh) || (check_eh == sh && check_em > sm)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if(check_sh >= sh){
+											if((check_sh < eh) || (check_sh == eh && check_sm < em)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if((check_sh < sh) || (check_sh == sh && check_sm < sm)){
+											if((check_eh > eh) || (check_eh == eh && check_em > em)){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
@@ -276,29 +281,12 @@
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
+										//start ends exactly as mine
 										//ends before mine
 										//start after mine
 										//start before mine and ends after mine
-										if(check_eh <= eh && check_em < em){
-											if(check_eh >= sh && check_em >= sm){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh >= sh && check_sm > sm){
-											if(check_sh <= eh && check_sm <= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh <= sh && check_sm < sm){
-											if(check_eh >= eh && check_em > em){
+										if(check_sh == sh && check_sm == sm){
+											if(check_eh == eh && check_em == em){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
@@ -306,8 +294,26 @@
 												conn.commit();
 											}
 										}
-										else if(check_sh == sh && check_sm == sm){
-											if(check_eh == eh && check_em == em){
+										else if(check_eh <= eh){
+											if((check_eh > sh) || (check_eh == sh && check_em > sm)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if(check_sh >= sh){
+											if((check_sh < eh) || (check_sh == eh && check_sm < em)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if((check_sh < sh) || (check_sh == sh && check_sm < sm)){
+											if((check_eh > eh) || (check_eh == eh && check_em > em)){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
@@ -335,31 +341,13 @@
 										if(dayQ_rs.getString("END_AMPM").equals("PM") && check_eh != 12)
 											check_eh = check_eh + 12;
 										
-										///check whether time conflicts, add the conflits ones to the s_temp table
+										//check whether time conflicts, add the conflits ones to the s_temp table
+										//start ends exactly as mine
 										//ends before mine
 										//start after mine
 										//start before mine and ends after mine
-										//start and end exactly as mine
-										if(check_eh <= eh && check_em < em){
-											if(check_eh >= sh && check_em >= sm){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh >= sh && check_sm > sm){
-											if(check_sh <= eh && check_sm <= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}											
-										}
-										else if(check_sh <= sh && check_sm < sm){
-											if(check_eh >= eh && check_em > em){
+										if(check_sh == sh && check_sm == sm){
+											if(check_eh == eh && check_em == em){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
@@ -367,8 +355,26 @@
 												conn.commit();
 											}
 										}
-										else if(check_sh == sh && check_sm == sm){
-											if(check_eh == eh && check_em == em){
+										else if(check_eh <= eh){
+											if((check_eh > sh) || (check_eh == sh && check_em > sm)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if(check_sh >= sh){
+											if((check_sh < eh) || (check_sh == eh && check_sm < em)){
+												//conflict
+												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
+												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
+												query.executeUpdate();
+												conn.commit();
+											}											
+										}
+										else if((check_sh < sh) || (check_sh == sh && check_sm < sm)){
+											if((check_eh > eh) || (check_eh == eh && check_em > em)){
 												//conflict
 												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
