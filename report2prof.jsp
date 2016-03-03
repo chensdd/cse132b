@@ -59,7 +59,7 @@
 						//get each section info from MEETING table
 						while(rs.next()){
 							//get all the sections that this student is taking in the corrent quarter
-							PreparedStatement stemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, START_H, START_M, START_AMPM, END_H, END_M, END_AMPM FROM MEETING WHERE SECTION_ID = ? AND CLASS_TYPE = ?");
+							PreparedStatement stemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE SECTION_ID = ? AND CLASS_TYPE = ?");
 						    stemp.setInt(1, rs.getInt("SECTION_ID"));
 							stemp.setString(2, rs.getString("CLASS_TYPE"));
 							ResultSet stempRS = stemp.executeQuery();
@@ -70,8 +70,6 @@
 								//get the start hour and end hour; if PM then add 12
 								int sh = stempRS.getInt("START_H");
 								int eh = stempRS.getInt("END_H");
-								int sm = stempRS.getInt("START_M");
-								int em = stempRS.getInt("END_M");
 								if(stempRS.getString("START_AMPM").equals("PM") && sh != 12)
 									sh = sh + 12;
 								if(stempRS.getString("END_AMPM").equals("PM") && eh != 12)
@@ -79,7 +77,7 @@
 								
 								//check day by day
 								if(stempRS.getString("MONDAY") != null){
-									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_M, START_AMPM, END_H, END_M, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND MONDAY = 'M'");
+									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND MONDAY = 'M'");
 									dayTemp.setInt(1, secID);
 									ResultSet dayQ_rs = dayTemp.executeQuery();
 									
@@ -88,45 +86,31 @@
 										//get the start hour and end hour; if PM then add 12
 										int check_sh = dayQ_rs.getInt("START_H");
 										int check_eh = dayQ_rs.getInt("END_H");
-										int check_sm = dayQ_rs.getInt("START_M");
-										int check_em = dayQ_rs.getInt("END_M");
 										if(dayQ_rs.getString("START_AMPM").equals("PM") && check_sh != 12)
 											check_sh = check_sh + 12;
 										if(dayQ_rs.getString("END_AMPM").equals("PM") && check_eh != 12)
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
-										//ends before mine
-										//start after mine
-										//start before mine and ends after mine
-										if(check_eh < eh && check_em < em){
+										if(sh >= check_sh && sh < check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
 										}
-										else if(check_sh > sh && check_sm > sm){
+										else if(eh > check_sh && eh <= check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
-										}
-										else if(check_sh <= sh && check_sm <= sm){
-											if(check_eh >= eh && check_em >= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}
 										}										
 									}
 									dayQ_rs.close();
 								}
 								if(stempRS.getString("TUESDAY") != null){
-									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_M, START_AMPM, END_H, END_M, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND TUESDAY = 'Tu'");
+									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND TUESDAY = 'Tu'");
 									dayTemp.setInt(1, secID);
 									ResultSet dayQ_rs = dayTemp.executeQuery();
 									
@@ -135,45 +119,31 @@
 										//get the start hour and end hour; if PM then add 12
 										int check_sh = dayQ_rs.getInt("START_H");
 										int check_eh = dayQ_rs.getInt("END_H");
-										int check_sm = dayQ_rs.getInt("START_M");
-										int check_em = dayQ_rs.getInt("END_M");
 										if(dayQ_rs.getString("START_AMPM").equals("PM") && check_sh != 12)
 											check_sh = check_sh + 12;
 										if(dayQ_rs.getString("END_AMPM").equals("PM") && check_eh != 12)
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
-										//ends before mine
-										//start after mine
-										//start before mine and ends after mine
-										if(check_eh < eh && check_em < em){
+										if(sh >= check_sh && sh < check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
 										}
-										else if(check_sh > sh && check_sm > sm){
+										else if(eh > check_sh && eh <= check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
-										}
-										else if(check_sh <= sh && check_sm <= sm){
-											if(check_eh >= eh && check_em >= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}
-										}											
+										}										
 									}
 									dayQ_rs.close();
 								}
 								if(stempRS.getString("WEDNESDAY") != null){
-									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_M, START_AMPM, END_H, END_M, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND WEDNESDAY = 'W'");
+									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND WEDNESDAY = 'W'");
 									dayTemp.setInt(1, secID);
 									ResultSet dayQ_rs = dayTemp.executeQuery();
 									
@@ -182,45 +152,31 @@
 										//get the start hour and end hour; if PM then add 12
 										int check_sh = dayQ_rs.getInt("START_H");
 										int check_eh = dayQ_rs.getInt("END_H");
-										int check_sm = dayQ_rs.getInt("START_M");
-										int check_em = dayQ_rs.getInt("END_M");
 										if(dayQ_rs.getString("START_AMPM").equals("PM") && check_sh != 12)
 											check_sh = check_sh + 12;
 										if(dayQ_rs.getString("END_AMPM").equals("PM") && check_eh != 12)
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
-										//ends before mine
-										//start after mine
-										//start before mine and ends after mine
-										if(check_eh < eh && check_em < em){
+										if(sh >= check_sh && sh < check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
 										}
-										else if(check_sh > sh && check_sm > sm){
+										else if(eh > check_sh && eh <= check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
-										}
-										else if(check_sh <= sh && check_sm <= sm){
-											if(check_eh >= eh && check_em >= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}
-										}											
+										}										
 									}
 									dayQ_rs.close();
 								}
 								if(stempRS.getString("THURSDAY") != null){
-									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_M, START_AMPM, END_H, END_M, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND THURSDAY = 'Th'");
+									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND THURSDAY = 'Tu'");
 									dayTemp.setInt(1, secID);
 									ResultSet dayQ_rs = dayTemp.executeQuery();
 									
@@ -229,45 +185,31 @@
 										//get the start hour and end hour; if PM then add 12
 										int check_sh = dayQ_rs.getInt("START_H");
 										int check_eh = dayQ_rs.getInt("END_H");
-										int check_sm = dayQ_rs.getInt("START_M");
-										int check_em = dayQ_rs.getInt("END_M");
 										if(dayQ_rs.getString("START_AMPM").equals("PM") && check_sh != 12)
 											check_sh = check_sh + 12;
 										if(dayQ_rs.getString("END_AMPM").equals("PM") && check_eh != 12)
 											check_eh = check_eh + 12;
 										
 										//check whether time conflicts, add the conflits ones to the s_temp table
-										//ends before mine
-										//start after mine
-										//start before mine and ends after mine
-										if(check_eh < eh && check_em < em){
+										if(sh >= check_sh && sh < check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
 										}
-										else if(check_sh > sh && check_sm > sm){
+										else if(eh > check_sh && eh <= check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
-										}
-										else if(check_sh <= sh && check_sm <= sm){
-											if(check_eh >= eh && check_em >= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}
-										}											
+										}										
 									}
 									dayQ_rs.close();
 								}
 								if(stempRS.getString("FRIDAY") != null){
-									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_M, START_AMPM, END_H, END_M, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND FRIDAY = 'F'");
+									PreparedStatement dayTemp = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE, START_H, START_AMPM, END_H, END_AMPM FROM MEETING WHERE SECTION_ID <> ? AND FRIDAY = 'F'");
 									dayTemp.setInt(1, secID);
 									ResultSet dayQ_rs = dayTemp.executeQuery();
 									
@@ -276,40 +218,26 @@
 										//get the start hour and end hour; if PM then add 12
 										int check_sh = dayQ_rs.getInt("START_H");
 										int check_eh = dayQ_rs.getInt("END_H");
-										int check_sm = dayQ_rs.getInt("START_M");
-										int check_em = dayQ_rs.getInt("END_M");
 										if(dayQ_rs.getString("START_AMPM").equals("PM") && check_sh != 12)
 											check_sh = check_sh + 12;
 										if(dayQ_rs.getString("END_AMPM").equals("PM") && check_eh != 12)
 											check_eh = check_eh + 12;
 										
-										///check whether time conflicts, add the conflits ones to the s_temp table
-										//ends before mine
-										//start after mine
-										//start before mine and ends after mine
-										if(check_eh < eh && check_em < em){
+										//check whether time conflicts, add the conflits ones to the s_temp table
+										if(sh >= check_sh && sh < check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
 										}
-										else if(check_sh > sh && check_sm > sm){
+										else if(eh > check_sh && eh <= check_eh){
 											//conflict
 											PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
 											query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
 											query.executeUpdate();
 											conn.commit();
-										}
-										else if(check_sh <= sh && check_sm <= sm){
-											if(check_eh >= eh && check_em >= em){
-												//conflict
-												PreparedStatement query = conn.prepareStatement("INSERT INTO S_TEMP VALUES (?)");
-												query.setInt(1, dayQ_rs.getInt("SECTION_ID"));
-												query.executeUpdate();
-												conn.commit();
-											}
-										}											
+										}										
 									}
 									dayQ_rs.close();
 								}
@@ -362,19 +290,54 @@
                     // Use the created statement to SELECT
                     // the student attributes FROM the Student table.
                     ResultSet rs = statement.executeQuery
-                        ("SELECT DISTINCT STUDENT.SSN, STUDENT.FIRSTNAME, STUDENT.MIDDLENAME, STUDENT.LASTNAME FROM STUDENT INNER JOIN TAKES ON STUDENT.ID = TAKES.STUDENT_ID");
+                        ("SELECT DISTINCT CLASS.COURSE_NUM, SECTION.SECTION_ID FROM CLASS INNER JOIN SECTION ON CLASS.COURSE_NUM = SECTION.COURSE_NUM AND SECTION.YEAR = 2016 AND SECTION.QUARTER = 'Winter'");
             %>
 
             <!-- Add an HTML table header row to format the results -->
-			<table border="0"><th><font face = "Arial Black" size = "6">Report II Currently Enrolled Students</font></th></table>
+			<table border="0"><th><font face = "Arial Black" size = "6">Report II Schedule for Review Session</font></th></table>
                 <table border="1">
-					<form action="report2.jsp" method="get">
+					<form action="report2prof.jsp" method="get">
 						<input type="hidden" value="choose" name="action">
 					<tr>
-						<th>Student SSN</th>	
+						<th>Section ID</th>	
 						<th>
 							<input type="text" value = "" name="SSN_NUM" size="10">							
-						</th>											
+						</th>
+						
+						<th>Time Period</th>	
+						<th>
+							<select name="startMonth_list">
+								<option value="01">January</option>
+								<option value="02">February</option>
+								<option value="03">March</option>
+							</select>
+							<select name = "startDay_list">
+							<%
+								for(int i = 1; i < 32; i++){
+							%>								
+								<option><%=i%></option>
+							<%
+								}
+							%>
+							</select>							
+						</th>
+						<th style="border:thin;"> -- </th>
+						<th>
+							<select name="endMonth_list">
+								<option value="01">January</option>
+								<option value="02">February</option>
+								<option value="03">March</option>
+							</select>
+							<select name = "endDay_list">
+							<%
+								for(int i = 1; i < 32; i++){
+							%>								
+								<option><%=i%></option>
+							<%
+								}
+							%>
+							</select>							
+						</th>
 
 					    <%-- Button --%>
                             <td>
@@ -385,10 +348,8 @@
 				</table>
 				<table border="1">	
                     <tr>
-                        <th>Student SSN</th>
-						<th>First Name</th>
-						<th>Middle Name</th>
-                        <th>Last Name</th>
+                        <th>Section ID</th>
+						<th>Course Num</th>
                     </tr>				
 
             <%-- -------- Iteration Code -------- --%>
@@ -400,28 +361,15 @@
 
 						<%-- Get the SSN, which is a number --%>
 						<td align="middle">
-							<input value="<%= rs.getInt("SSN") %>" 
-								name="SSN" size="10" readonly>
+							<input value="<%= rs.getInt("SECTION_ID") %>" 
+								name="SECTION_ID" size="10" readonly>
 						</td>
 
-
-						<%-- Get the FIRSTNAME --%>
 						<td align="middle">
-							<input value="<%= rs.getString("FIRSTNAME") %>"
-								name="FIRSTNAME" size="15" style="text-align:center;" readonly>
+							<input value="<%= rs.getString("COURSE_NUM") %>"
+								name="COURSE_NUM" size="10" style="text-align:center;" readonly>
 						</td>
 
-						<%-- Get the MIDDLENAME --%>
-						<td align="middle">
-							<input value="<%= rs.getString("MIDDLENAME") %>" 
-								name="MIDDLENAME" size="15" style="text-align:center;" readonly>
-						</td>
-
-						<%-- Get the LASTNAME --%>
-						<td align="middle">
-							<input value="<%= rs.getString("LASTNAME") %>" 
-								name="LASTNAME" size="15" style="text-align:center;" readonly>
-						</td>
                     </tr>
             <%
                     }
