@@ -27,8 +27,8 @@
     
                     // Make a connection to the Oracle datasource "cse132b"
                     conn = DriverManager.getConnection
-					("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
-						"sa", "Ding8374");
+                        ("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
+                            "sa", "Ding8374");
 
             %>
 
@@ -113,7 +113,7 @@
                     // Use the created statement to SELECT
                     // the faculty attributes FROM the FACULTY table.
                     rs = statement.executeQuery
-                        ("SELECT T.STUDENT_ID AS STUDENT_ID, CL.TITLE AS TITLE, S.SECTION_ID AS SECTION_ID, T.GRADE AS GRADE, T.UNITS AS UNITS FROM TAKEN T, SECTION S, COURSE C, CLASS CL WHERE T.SECTION_ID = S.SECTION_ID AND S.COURSE_NUM = C.COURSE_NUM AND S.QUARTER = CL.QUARTER AND S.YEAR = CL.YEAR AND S.COURSE_NUM = CL.COURSE_NUM");
+                        ("SELECT T.STUDENT_ID AS STUDENT_ID, CL.COURSE_NUM AS COURSE_NUM, CL.TITLE AS TITLE, S.SECTION_ID AS SECTION_ID, T.GRADE AS GRADE, T.UNITS AS UNITS FROM TAKEN T, SECTION S, CLASS CL WHERE T.SECTION_ID = S.SECTION_ID AND S.QUARTER = CL.QUARTER AND S.YEAR = CL.YEAR AND S.COURSE_NUM = CL.COURSE_NUM");
 
                    //ResultSet rs = statement.executeQuery
                    //     ("SELECT * FROM TAKEN");
