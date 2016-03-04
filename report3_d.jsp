@@ -30,7 +30,7 @@
 				<%
 				// Create the statement
 				Statement statement = conn.createStatement();
-				ResultSet c_rs = statement.executeQuery("SELECT DISTINCT SECTION.COURSE_NUM, SECTION.FACULTY_NAME FROM SECTION");				
+				ResultSet c_rs = statement.executeQuery("SELECT DISTINCT SECTION.COURSE_NUM, SECTION.FACULTY_NAME FROM SECTION WHERE ((YEAR != 2016 AND QUARTER <> 'Winter') OR (YEAR < 2016))");				
 				%>
 				<!-- Add an HTML table header row to format the results -->
 				<table border="0"><th><font face = "Arial Black" size = "6">Report III - part d Avg Grade</font></th></table>
@@ -74,7 +74,7 @@
 					String faculty_name = tokens[1];					
 				
 					//get the section ID from the selection
-					PreparedStatement pstmt = conn.prepareStatement("SELECT DISTINCT YEAR FROM SECTION WHERE COURSE_NUM = ? AND FACULTY_NAME = ? ");
+					PreparedStatement pstmt = conn.prepareStatement("SELECT DISTINCT YEAR FROM SECTION WHERE COURSE_NUM = ? AND FACULTY_NAME = ? AND ((YEAR != 2016 AND QUARTER <> 'Winter') OR (YEAR < 2016))");
 					pstmt.setString(1, course_num);
 					pstmt.setString(2, faculty_name);
 
@@ -236,7 +236,7 @@
 							</tr>
 							</table>
 							
-							<table border="0">
+							<table border="1">
 							<tr>
 								<th style="border-bottom: thin solid;">OverallGPA: <%=overalltemp%> / <%=stuNumtemp%> = <%=overalltemp/stuNumtemp%></th>
 							</tr>							
@@ -337,7 +337,7 @@
 							</tr>
 							</table>
 							
-							<table border="0">
+							<table border="1">
 							<tr>
 								<th style="border-bottom: thin solid;">OverallGPA: <%=overall%> / <%=stuNum%> = <%=overall/stuNum%></th>
 							</tr>							

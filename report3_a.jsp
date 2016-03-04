@@ -43,7 +43,7 @@
 							<select name = "selection">
 								<% 
 									while (c_rs.next()){
-										if(!c_rs.getString("QUARTER").equals("Winter") && c_rs.getInt("YEAR") != 2016){
+										if(!(c_rs.getString("QUARTER").equals("Winter") && c_rs.getInt("YEAR") == 2016)){
 								%>
 									 <option value="<%= c_rs.getString("COURSE_NUM") %>,<%= c_rs.getString("QUARTER") %>,<%= c_rs.getInt("YEAR") %>,<%= c_rs.getString("FACULTY_NAME") %>"><%= c_rs.getString("COURSE_NUM") %> | <%= c_rs.getString("QUARTER") %> <%= c_rs.getInt("YEAR") %> - <%= c_rs.getString("FACULTY_NAME") %></option>	
 								<%

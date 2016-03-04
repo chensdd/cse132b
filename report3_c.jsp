@@ -30,10 +30,10 @@
 				<%
 				// Create the statement
 				Statement statement = conn.createStatement();
-				ResultSet c_rs = statement.executeQuery("SELECT DISTINCT COURSE_NUM FROM CLASS");				
+				ResultSet c_rs = statement.executeQuery("SELECT DISTINCT COURSE_NUM FROM SECTION WHERE ((YEAR != 2016 AND QUARTER <> 'Winter') OR (YEAR < 2016))");				
 				%>
 				<!-- Add an HTML table header row to format the results -->
-				<table border="0"><th><font face = "Arial Black" size = "6">Report III - part b</font></th></table>
+				<table border="0"><th><font face = "Arial Black" size = "6">Report III - part c</font></th></table>
 					<table border="1">
 						<form action="report3_c.jsp" method="get">
 							<input type="hidden" value="choose" name="action">
@@ -68,7 +68,7 @@
 					conn.setAutoCommit(false); 
 				
 					//get the section ID from the selection
-					PreparedStatement pstmt = conn.prepareStatement("SELECT DISTINCT YEAR FROM SECTION WHERE COURSE_NUM = ? ");
+					PreparedStatement pstmt = conn.prepareStatement("SELECT DISTINCT YEAR FROM SECTION WHERE COURSE_NUM = ? AND ((YEAR != 2016 AND QUARTER <> 'Winter') OR (YEAR < 2016))");
 					pstmt.setString(1, request.getParameter("course_list"));
 
 					ResultSet rs = pstmt.executeQuery();	
@@ -137,7 +137,7 @@
 							}
 							
 						%>
-							<table border="0"><th><font face = "Monospace" size = "5"><%= f_rs.getString("FACULTY_NAME")%> - <%= rs.getInt("YEAR")%>|Sections total: <%= classNum%> </font></th></table>
+							<table border="0"><th><font face = "Monospace" size = "5"><%= rs.getInt("YEAR")%> - <%= f_rs.getString("FACULTY_NAME")%>|Sections total: <%= classNum%> </font></th></table>
 							<table border="0">
 							<tr>
 								<th style="border-bottom: thin solid;">A Grades: <%=atemp%></th>
