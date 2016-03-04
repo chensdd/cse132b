@@ -99,12 +99,12 @@
     
 							<td align="middle">
                                 <input value="<%= rs.getString("DEPT_NAME") %>" 
-                                    name="DEPT_NAME" size="40">
+                                    name="DEPT_NAME" style="text-align:center;" size="40">
                             </td>
 							
 							<td align="middle">
                                 <input value="<%= rs.getString("CONCENTRATION") %>" 
-                                    name="CONCENTRATION" size="10">
+                                    name="CONCENTRATION" style="text-align:center;" size="10">
                             </td>
 
                             <%-- Button --%>

@@ -57,7 +57,7 @@
 							PreparedStatement sstmt = conn.prepareStatement(
                             "INSERT INTO UNDERGRAD VALUES (?, ?, ?, ?, ?)");
 							sstmt.setInt(1, Integer.parseInt(request.getParameter("ID")));
-							sstmt.setString(2, "School <-need to be entered->");
+							sstmt.setString(2, "School");
 							sstmt.setString(3, "Undecided");
 							sstmt.setString(4, "Undecided");
 							sstmt.setString(5, "No");

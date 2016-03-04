@@ -40,12 +40,11 @@
                         // UPDATE the student attributes in the Student table.
                         PreparedStatement pstmt = conn.prepareStatement(
                             "UPDATE UNDERGRAD SET COLLEGE_NAME = ?, " +
-                            "MAJOR = ?, MINOR = ?, FIVEYEAR = ? WHERE UNDERGRAD_ID = ?");
+                            "MAJOR = ?, FIVEYEAR = ? WHERE UNDERGRAD_ID = ?");
 
                         pstmt.setString(1, request.getParameter("COLLEGE_NAME"));
                         pstmt.setString(2, request.getParameter("MAJOR"));
-                        pstmt.setString(3, request.getParameter("MINOR"));
-                        pstmt.setString(4, request.getParameter("FIVEYEAR"));
+                        pstmt.setString(3, request.getParameter("FIVEYEAR"));
                         pstmt.setInt(
                             5, Integer.parseInt(request.getParameter("UNDERGRAD_ID")));
                         int rowCount = pstmt.executeUpdate();
@@ -75,7 +74,6 @@
                         <th>Undergrad ID</th>
                         <th>College Name</th>
 						<th>Major</th>
-						<th>Minor</th>
 						<th>5 Year MS</th>
                         <th>Action</th>
                     </tr>				
@@ -98,22 +96,17 @@
                             <%-- Get the COLLEGE --%>
                             <td>
                                 <input value="<%= rs.getString("COLLEGE_NAME") %>" 
-                                    name="COLLEGE_NAME" size="50">
+                                    name="COLLEGE_NAME" style="text-align:center;" size="20">
                             </td>
     
 							<td>
                                 <input value="<%= rs.getString("MAJOR") %>" 
-                                    name="MAJOR" size="10">
-                            </td>
-							
-							<td>
-                                <input value="<%= rs.getString("MINOR") %>" 
-                                    name="MINOR" size="10">
+                                    name="MAJOR" style="text-align:center;" size="20">
                             </td>
 							
 							<td>
                                 <input value="<%= rs.getString("FIVEYEAR") %>" 
-                                    name="FIVEYEAR" size="5">
+                                    name="FIVEYEAR" style="text-align:center;" size="6">
                             </td>
                             <%-- Button --%>
                             <td>
