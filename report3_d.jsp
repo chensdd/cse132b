@@ -74,7 +74,7 @@
 					String faculty_name = tokens[1];					
 				
 					//get the section ID from the selection
-					PreparedStatement pstmt = conn.prepareStatement("SELECT YEAR FROM SECTION WHERE COURSE_NUM = ? AND FACULTY_NAME = ? ");
+					PreparedStatement pstmt = conn.prepareStatement("SELECT DISTINCT YEAR FROM SECTION WHERE COURSE_NUM = ? AND FACULTY_NAME = ? ");
 					pstmt.setString(1, course_num);
 					pstmt.setString(2, faculty_name);
 
@@ -146,7 +146,8 @@
 									othertemp++;
 								}
 							}									
-						
+							stempRS.close();
+						}
 						%>
 							<table border="0"><th><font face = "Monospace" size = "6"><%= rs.getInt("YEAR")%></font></th></table>
 							<table border="0">							
@@ -241,9 +242,7 @@
 							</tr>							
 							</table>
 								
-						<%
-							stempRS.close();
-						}													
+						<%	
 						y_rs.close();
 					}
 					

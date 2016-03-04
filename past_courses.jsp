@@ -120,7 +120,7 @@
 
 
                     statement2 = conn.createStatement();
-                    courses = statement2.executeQuery("SELECT C.COURSE_NUM AS COURSE_NUM, CL.TITLE AS TITLE FROM COURSE C, CLASS CL, WHERE C.COURSE_NUM = CL.COURSE_NUM");
+                    courses = statement2.executeQuery("SELECT C.COURSE_NUM AS COURSE_NUM, CL.TITLE AS TITLE FROM COURSE C, CLASS CL WHERE C.COURSE_NUM = CL.COURSE_NUM");
             %>
 
             <!-- Add an HTML table header row to format the results -->
