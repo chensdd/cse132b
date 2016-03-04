@@ -42,8 +42,7 @@
                             PreparedStatement pstmt = conn.prepareStatement(
                             "INSERT INTO CATEGORIES VALUES (?, ?, ?, ?, ?)");
                             pstmt.setString(1, request.getParameter("DEPT_NAME"));
-                            pstmt.setInt(
-                                2, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                            pstmt.setString(2, request.getParameter("COURSE_NUM"));
                             pstmt.setString(3, request.getParameter("NAME"));
                             pstmt.setString(4, request.getParameter("MIN_UNITS"));
                             pstmt.setString(5, request.getParameter("MIN_GPA"));
@@ -53,8 +52,7 @@
                             PreparedStatement pstmt = conn.prepareStatement(
                             "INSERT INTO CONCENTRATION VALUES (?, ?, ?, ?, ?)");
                             pstmt.setString(1, request.getParameter("DEPT_NAME"));
-                            pstmt.setInt(
-                                2, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                            pstmt.setString(2, request.getParameter("COURSE_NUM"));
                             pstmt.setString(3, request.getParameter("NAME"));
                             pstmt.setString(4, request.getParameter("MIN_UNITS"));
                             pstmt.setString(5, request.getParameter("MIN_GPA"));
@@ -81,8 +79,7 @@
                             pstmt.setString(1, request.getParameter("MIN_UNITS"));
                             pstmt.setString(2, request.getParameter("MIN_GPA"));
                             pstmt.setString(3, request.getParameter("DEPT_NAME"));
-                            pstmt.setInt(
-                                4, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                            pstmt.setString(4, request.getParameter("COURSE_NUM"));
                             pstmt.setString(5, request.getParameter("NAME"));
                             int rowCount = pstmt.executeUpdate();
                         }
@@ -92,8 +89,7 @@
                             pstmt.setString(1, request.getParameter("MIN_UNITS"));
                             pstmt.setString(2, request.getParameter("MIN_GPA"));
                             pstmt.setString(3, request.getParameter("DEPT_NAME"));
-                            pstmt.setInt(
-                                4, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                            pstmt.setString(4, request.getParameter("COURSE_NUM"));
                             pstmt.setString(5, request.getParameter("NAME"));
                             int rowCount = pstmt.executeUpdate();
                         }
@@ -116,8 +112,7 @@
                             PreparedStatement pstmt = conn.prepareStatement(
                                 "DELETE FROM CATEGORIES WHERE DEPT_NAME = ? AND COURSE_NUM = ? AND NAME = ?");
                             pstmt.setString(1, request.getParameter("DEPT_NAME"));
-                            pstmt.setInt(
-                                2, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                            pstmt.setString(2, request.getParameter("COURSE_NUM"));
                             pstmt.setString(3, request.getParameter("NAME"));
                             int rowCount = pstmt.executeUpdate();
                         }
@@ -125,8 +120,7 @@
                             PreparedStatement pstmt = conn.prepareStatement(
                                 "DELETE FROM CONCENTRATION WHERE DEPT_NAME = ? AND COURSE_NUM = ? AND NAME = ?");
                             pstmt.setString(1, request.getParameter("DEPT_NAME"));
-                            pstmt.setInt(
-                                2, Integer.parseInt(request.getParameter("COURSE_NUM")));
+                            pstmt.setString(2, request.getParameter("COURSE_NUM"));
                             pstmt.setString(3, request.getParameter("NAME"));
                             int rowCount = pstmt.executeUpdate();
                         }
@@ -193,7 +187,7 @@
 
                             <%-- Get the COURSE_NUM, which is a number --%>
                             <td align="middle">
-                                <input value="<%= rs1.getInt("COURSE_NUM") %>" 
+                                <input value="<%= rs1.getString("COURSE_NUM") %>" 
                                     name="COURSE_NUM" size="15" readonly>
                             </td>
     
@@ -231,7 +225,7 @@
                             <input type="hidden" 
                                 value="<%= rs1.getString("DEPT_NAME") %>" name="DEPT_NAME">
                             <input type="hidden" 
-                                value="<%= rs1.getInt("COURSE_NUM") %>" name="COURSE_NUM">
+                                value="<%= rs1.getString("COURSE_NUM") %>" name="COURSE_NUM">
                             <input type="hidden" 
                                 value="<%= rs1.getString("NAME") %>" name="NAME">
                             <input type="hidden" 
@@ -276,7 +270,7 @@
 
                             <%-- Get the COURSE_NUM, which is a number --%>
                             <td>
-                                <input value="<%= rs2.getInt("COURSE_NUM") %>" 
+                                <input value="<%= rs2.getString("COURSE_NUM") %>" 
                                     name="COURSE_NUM" size="15" readonly>
                             </td>
     
@@ -314,7 +308,7 @@
                             <input type="hidden" 
                                 value="<%= rs2.getString("DEPT_NAME") %>" name="DEPT_NAME">
                             <input type="hidden" 
-                                value="<%= rs2.getInt("COURSE_NUM") %>" name="COURSE_NUM">
+                                value="<%= rs2.getString("COURSE_NUM") %>" name="COURSE_NUM">
                             <input type="hidden" 
                                 value="<%= rs2.getString("NAME") %>" name="NAME">
                             <input type="hidden" 

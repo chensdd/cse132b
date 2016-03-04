@@ -177,7 +177,7 @@
     
                             <%-- Get the SECTION_ID, which is a number --%>
                             <td align="middle">
-                                <input value="<%= rs.getInt("SECTION_ID") %>" 
+                                <input value="<%= rs.getString("SECTION_ID") %>" 
                                     name="SECTION_ID" size="10" readonly>
                             </td>
 

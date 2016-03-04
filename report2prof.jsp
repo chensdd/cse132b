@@ -614,10 +614,7 @@
                     // Create the statement
                     Statement statement = conn.createStatement();
 
-                    // Use the created statement to SELECT
-                    // the student attributes FROM the Student table.
-                    ResultSet rs = statement.executeQuery
-                        ("SELECT DISTINCT CLASS.COURSE_NUM, SECTION.SECTION_ID FROM CLASS INNER JOIN SECTION ON CLASS.COURSE_NUM = SECTION.COURSE_NUM AND SECTION.YEAR = 2016 AND SECTION.QUARTER = 'Winter'");
+                    ResultSet rs = statement.executeQuery("SELECT DISTINCT CLASS.COURSE_NUM, SECTION.SECTION_ID FROM CLASS INNER JOIN SECTION ON CLASS.COURSE_NUM = SECTION.COURSE_NUM AND SECTION.YEAR = 2016 AND SECTION.QUARTER = 'Winter'");
             %>
 
             <!-- Add an HTML table header row to format the results -->
@@ -627,8 +624,17 @@
 						<input type="hidden" value="choose" name="action">
 					<tr>
 						<th>Section ID</th>	
-						<th>
-							<input type="text" value = "" name="SECTION_ID" size="10">							
+						<th><name="SECTION_ID" size="20">
+                            <select name = "SECTION_ID">
+                                <% 
+                                    while (rs.next()){
+                                %>
+                                     <option value=<%= rs.getInt("SECTION_ID")%>><%= rs.getInt("SECTION_ID") %> |<%= rs.getString("COURSE_NUM") %> </option>
+                                <%
+                                    }
+                                %>
+                                 
+                            </select>
 						</th>
 						
 						<th>Time Period</th>	
@@ -673,34 +679,6 @@
 					</form>
 					</tr>
 				</table>
-				<table border="1">	
-                    <tr>
-                        <th>Section ID</th>
-						<th>Course Num</th>
-                    </tr>				
-
-            <%-- -------- Iteration Code -------- --%>
-            <%
-                    // Iterate over the ResultSet        
-                    while ( rs.next() ) {      
-            %>
-                    <tr>
-
-						<%-- Get the SSN, which is a number --%>
-						<td align="middle">
-							<input value="<%= rs.getInt("SECTION_ID") %>" 
-								name="SECTION_ID_SHOW" size="10" readonly>
-						</td>
-
-						<td align="middle">
-							<input value="<%= rs.getString("COURSE_NUM") %>"
-								name="COURSE_NUM_SHOW" size="10" style="text-align:center;" readonly>
-						</td>
-
-                    </tr>
-            <%
-                    }
-            %>
 
             <%-- -------- Close Connection Code -------- --%>
             <%
@@ -718,7 +696,6 @@
                     out.println(e.getMessage());
                 }
             %>
-                </table>
 				
             </td>
         </tr>

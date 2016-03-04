@@ -417,6 +417,9 @@
                     // the student attributes FROM the Student table.
                     ResultSet rs = statement.executeQuery
                         ("SELECT DISTINCT STUDENT.ID, STUDENT.FIRSTNAME, STUDENT.MIDDLENAME, STUDENT.LASTNAME FROM STUDENT INNER JOIN TAKES ON STUDENT.ID = TAKES.STUDENT_ID");
+						
+					Statement statement2 = conn.createStatement();	
+					ResultSet students = statement2.executeQuery("SELECT DISTINCT S.ID AS ID, S.FIRSTNAME AS FIRSTNAME, S.MIDDLENAME AS MIDDLENAME, S.LASTNAME AS LASTNAME FROM STUDENT S, TAKES T WHERE S.ENROLL = 'Yes' AND S.ID = T.STUDENT_ID");
             %>
 
             <!-- Add an HTML table header row to format the results -->
@@ -426,9 +429,18 @@
 						<input type="hidden" value="choose" name="action">
 					<tr>
 						<th>Student ID</th>	
-						<th>
-							<input type="text" value = "" name="ID" size="10">							
-						</th>											
+						<th><name="ID" size="20">
+                            <select name = "ID">
+                                <% 
+                                    while ( students.next() ){
+                                %>
+                                     <option value=<%= students.getString("ID") %>><%= students.getString("ID") %> | <%= students.getString("FIRSTNAME") %>, <%= students.getString("MIDDLENAME") %>, <%= students.getString("LASTNAME") %></option>
+                                <%
+                                    }
+                                %>
+                                 
+							</select>
+						</th>										
 
 					    <%-- Button --%>
                             <td>
