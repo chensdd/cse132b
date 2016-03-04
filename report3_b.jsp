@@ -30,12 +30,12 @@
 				<%
 				// Create the statement
 				Statement statement = conn.createStatement();
-				ResultSet c_rs = statement.executeQuery("SELECT DISTINCT SECTION.COURSE_NUM, SECTION.YEAR, SECTION.QUARTER, SECTION.FACULTY_NAME FROM SECTION");				
+				ResultSet c_rs = statement.executeQuery("SELECT DISTINCT SECTION.COURSE_NUM, SECTION.FACULTY_NAME FROM SECTION");				
 				%>
 				<!-- Add an HTML table header row to format the results -->
-				<table border="0"><th><font face = "Arial Black" size = "6">Report III - part a</font></th></table>
+				<table border="0"><th><font face = "Arial Black" size = "6">Report III - part b</font></th></table>
 					<table border="1">
-						<form action="report3_a.jsp" method="get">
+						<form action="report3_b.jsp" method="get">
 							<input type="hidden" value="choose" name="action">
 						<tr>
 							<th>Quarter Selection</th>	
@@ -43,11 +43,9 @@
 							<select name = "selection">
 								<% 
 									while (c_rs.next()){
-										if(!c_rs.getString("QUARTER").equals("Winter") && c_rs.getInt("YEAR") != 2016){
 								%>
-									 <option value="<%= c_rs.getString("COURSE_NUM") %>,<%= c_rs.getString("QUARTER") %>,<%= c_rs.getInt("YEAR") %>,<%= c_rs.getString("FACULTY_NAME") %>"><%= c_rs.getString("COURSE_NUM") %> | <%= c_rs.getString("QUARTER") %> <%= c_rs.getInt("YEAR") %> - <%= c_rs.getString("FACULTY_NAME") %></option>	
+									 <option value="<%= c_rs.getString("COURSE_NUM") %>,<%= c_rs.getString("FACULTY_NAME") %>"><%= c_rs.getString("COURSE_NUM") %> - <%= c_rs.getString("FACULTY_NAME") %></option>	
 								<%
-										}
 									}
 								%>
 								 
@@ -68,28 +66,19 @@
 				// Check if an insertion is requested
 				if (action != null && action.equals("choose")) {
 						
-					conn.setAutoCommit(false);
+					conn.setAutoCommit(false); 
 
 					String before_parse = request.getParameter("selection");
 					String[] tokens = before_parse.split(",");
 					String course_num = tokens[0];
-					String quarter = tokens[1];
-					String year = tokens[2];
-					String faculty_name = tokens[3];
+					String faculty_name = tokens[1];
 				
 					//get the section ID from the selection
-					PreparedStatement pstmt = conn.prepareStatement("SELECT SECTION_ID FROM SECTION WHERE COURSE_NUM = ? AND FACULTY_NAME = ? AND QUARTER = ? AND YEAR = ?");
+					PreparedStatement pstmt = conn.prepareStatement("SELECT DISTINCT YEAR FROM SECTION WHERE COURSE_NUM = ? AND FACULTY_NAME = ?");
 					pstmt.setString(1, course_num);
 					pstmt.setString(2, faculty_name);
-					pstmt.setString(3, quarter);
-					pstmt.setInt(4, Integer.parseInt(year));
 
-					ResultSet rs = pstmt.executeQuery();			
-					
-					//get the section ID
-					int sectionID = 0;						
-					if(rs.next())
-						sectionID = rs.getInt("SECTION_ID");
+					ResultSet rs = pstmt.executeQuery();	
 					
 					int a_grade = 0;
 					int b_grade = 0;
@@ -97,30 +86,82 @@
 					int d_grade = 0;
 					int other = 0;
 					
-					
-					//get all students who took this section in the past and count the grades
-					PreparedStatement stemp = conn.prepareStatement("SELECT GRADE FROM TAKEN WHERE SECTION_ID = ?");
-					stemp.setInt(1, sectionID);
-					ResultSet stempRS = stemp.executeQuery();
-					
-					%>
-						<table border="0"><th><font face = "Monospace" size = "6">Course ID <%= course_num%> <%= faculty_name%> <%= quarter%> <%= year%></font></th></table>
-					<%
-					while(stempRS.next()){	
-						if(stempRS.getString("GRADE").contains("A"))
-							a_grade++;
-						else if(stempRS.getString("GRADE").contains("B"))
-							b_grade++;
-						else if(stempRS.getString("GRADE").contains("C"))
-							c_grade++;
-						else if(stempRS.getString("GRADE").contains("D"))
-							d_grade++;
-						else //F,S,U,IN
-							other++;			
+					//loop for each year
+					while(rs.next()){
+						PreparedStatement subquery = conn.prepareStatement("SELECT SECTION_ID FROM SECTION WHERE COURSE_NUM = ? AND FACULTY_NAME = ? AND YEAR = ?");
+						subquery.setString(1, course_num);
+						subquery.setString(2, faculty_name);
+						subquery.setInt(3, rs.getInt("YEAR"));
+						
+						ResultSet y_rs = subquery.executeQuery();
+						
+						int atemp = 0;
+						int btemp = 0;
+						int ctemp = 0;
+						int dtemp = 0;
+						int othertemp = 0;
+						
+						while(y_rs.next()){
+							//get all students who took this section in the past and count the grades
+							PreparedStatement stemp = conn.prepareStatement("SELECT GRADE FROM TAKEN WHERE SECTION_ID = ?");
+							stemp.setInt(1, y_rs.getInt("SECTION_ID"));
+							ResultSet stempRS = stemp.executeQuery();
+							
+							while(stempRS.next()){	
+								if(stempRS.getString("GRADE").contains("A")){
+									a_grade++;
+									atemp++;
+								}
+								else if(stempRS.getString("GRADE").contains("B")){
+									b_grade++;
+									btemp++;
+								}
+								else if(stempRS.getString("GRADE").contains("C")){
+									c_grade++;
+									ctemp++;
+								}
+								else if(stempRS.getString("GRADE").contains("D")){
+									d_grade++;
+									dtemp++;
+								}
+								else{//F,S,U,IN
+									other++;
+									othertemp++;
+								}
+							}
+							stempRS.close();
+						}
+						
+						%>
+							<table border="0"><th><font face = "Monospace" size = "6"><%= rs.getInt("YEAR")%></font></th></table>
+							<table border="0">
+							<tr>
+								<th style="border-bottom: thin solid;">A Grades: <%=atemp%></th>
+							</tr>
+							<tr>
+								<th style="border-bottom: thin solid;">B Grades: <%=btemp%></th>
+							</tr>
+							<tr>
+								<th style="border-bottom: thin solid;">C Grades: <%=ctemp%></th>
+							</tr>
+							<tr>
+								<th style="border-bottom: thin solid;">D Grades: <%=dtemp%></th>
+							</tr>
+							<tr>
+								<th style="border-bottom: thin solid;">Other: <%=othertemp%></th>
+							</tr>
+							</table>
+								
+						<%							
+																			
+						y_rs.close();
 					}
 					
-						%>
-						<table border="0"><th style="border-bottom: thin solid;"><font face = "Monospace" size = "5">Grade Distribution</font></th></table>
+					
+					%>
+						<table border="0"><th><font face = "Monospace" size = "6">Course ID <%= course_num%> <%= faculty_name%></font></th></table>
+				
+						<table border="0"><th style="border-bottom: thin solid;"><font face = "Monospace" size = "5">Overall Grade Distribution</font></th></table>
 						<table border="0">
 						<tr>
 							<th style="border-bottom: thin solid;">A Grades: <%=a_grade%></th>
@@ -140,7 +181,6 @@
 						</table>
 							
 			<%				
-					stempRS.close();
 					rs.close();
 					//Commit transaction					
 					conn.commit();

@@ -32,8 +32,8 @@
     
                     // Make a connection to the Oracle datasource "cse132b"
                     conn = DriverManager.getConnection
-                        ("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
-                            "sa", "Ding8374");
+					("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
+						"sa", "Ding8374");
 
 
             %>
@@ -58,7 +58,7 @@
                         String quarter = tokens[1];
                         String year = tokens[2];
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "SELECT CL.TITLE AS TITLE, CL.COURSE_NUM AS COURSE_NUM, CL.QUARTER AS QUARTER, CL.YEAR AS YEAR FROM CLASS CL WHERE CL.COURSE_NUM = ? AND CL.QUARTER = ? AND CL.YEAR = ?");
+                            "SELECT CL.TITLE AS TITLE, CL.COURSE_NUM AS COURSE_NUM, CL.QUARTER AS QUARTER, CL.YEAR AS YEAR FROM CLASS CL WHERE CL.COURSE_NUM = ? AND CL.QUARTER = ? AND CL.YEAR = ? ");
                         pstmt.setString(1, course_num);
                         pstmt.setString(2, quarter);
                         pstmt.setInt(3, Integer.parseInt(year));
@@ -67,10 +67,9 @@
                         columnCount1 = rsmd1.getColumnCount();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                            "SELECT ST.SSN AS SSN, ST.ID AS ID, ST.FIRSTNAME AS FIRST_NAME, ST.MIDDLENAME AS MIDDLE_NAME, ST.LASTNAME AS LAST_NAME, ST.RESIDENCY AS RESIDENCY, ST.STU_STATUS AS STU_STATUS, ST.ENROLL AS ENROLL, T.GRADE_OPTION AS GRADE_OPTION, T.UNITS AS UNITS FROM SECTION S, TAKES T, COURSE C, STUDENT ST WHERE S.COURSE_NUM = ? AND S.QUARTER = ? AND S.YEAR = ? AND S.SECTION_ID = T.SECTION_ID AND S.COURSE_NUM = C.COURSE_NUM AND T.STUDENT_ID = ST.ID");
+                            "SELECT DISTINCT S.QUARTER AS QUARTER, S.YEAR AS YEAR, ST.SSN AS SSN, ST.ID AS ID, ST.FIRSTNAME AS FIRST_NAME, ST.MIDDLENAME AS MIDDLE_NAME, ST.LASTNAME AS LAST_NAME, ST.RESIDENCY AS RESIDENCY, ST.STU_STATUS AS STU_STATUS, ST.ENROLL AS ENROLL, T.GRADE_OPTION AS GRADE, T.UNITS AS UNITS FROM SECTION S, TAKES T, STUDENT ST WHERE S.COURSE_NUM = ? AND S.SECTION_ID = T.SECTION_ID AND T.STUDENT_ID = ST.ID UNION SELECT DISTINCT S.QUARTER AS QUARTER, S.YEAR AS YEAR, ST.SSN AS SSN, ST.ID AS ID, ST.FIRSTNAME AS FIRST_NAME, ST.MIDDLENAME AS MIDDLE_NAME, ST.LASTNAME AS LAST_NAME, ST.RESIDENCY AS RESIDENCY, ST.STU_STATUS AS STU_STATUS, ST.ENROLL AS ENROLL, T.GRADE AS GRADE, T.UNITS AS UNITS FROM SECTION S, TAKEN T, STUDENT ST WHERE S.COURSE_NUM = ? AND S.SECTION_ID = T.SECTION_ID AND T.STUDENT_ID = ST.ID");
                         pstmt2.setString(1, course_num);
-                        pstmt2.setString(2, quarter);
-                        pstmt2.setInt(3, Integer.parseInt(year));
+                        pstmt2.setString(2, course_num);
                         rs2 = pstmt2.executeQuery();
 
                         rsmd2 = rs2.getMetaData();
@@ -96,7 +95,7 @@
             <table border="0"><th><font face = "Arial Black" size = "6">Report</font></th></table>
                 <table border="1">
                     <tr>
-                        <th>Student ID</th>
+                        <th>Displat Roster For</th>
                         <th>Action</th>
                     </tr>
                     <tr>
@@ -121,7 +120,7 @@
             <%-- -------- Iteration Code -------- --%>
             <%
                     // Iterate over the ResultSet        
-                    if ( rs.next() ) {      
+                    if ( columnCount1!=0 ) {      
             %>
                 <table border="0"><th><font face = "Arial Black" size = "6">Class Info</font></th></table>
                 <table border="1">
@@ -137,6 +136,9 @@
                     }
             %>       
                     </tr>    
+            <%
+                while(rs.next()){
+            %>
                     <tr>
 
                             <%-- Get the TITLE, which is a number --%>
@@ -164,6 +166,9 @@
                             </td>
 
                     </tr>
+            <%
+                }
+            %>
                 </table>
             <%
                     }

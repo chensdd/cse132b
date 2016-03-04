@@ -32,8 +32,8 @@
     
                     // Make a connection to the Oracle datasource "cse132b"
                     conn = DriverManager.getConnection
-                        ("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
-                            "sa", "Ding8374");
+					("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
+						"sa", "Ding8374");
 
 
             %>
@@ -60,7 +60,7 @@
                         columnCount1 = rsmd1.getColumnCount();
 
                         PreparedStatement pstmt2 = conn.prepareStatement(
-                            "SELECT C.COURSE_NUM AS COURSE, SECT.QUARTER AS QUARTER, SECT.YEAR AS YEAR, C.UNITS_MIN AS MIN_UNITS, C.UNITS_MAX AS MAX_UNITS, SECT.SECTION_ID AS SECTION_ID, SECT.FACULTY_NAME AS PROFESSOR FROM STUDENT STD, SECTION SECT, COURSE C, TAKES T WHERE STD.ID = ? AND T.STUDENT_ID = STD.ID AND T.SECTION_ID = SECT.SECTION_ID AND SECT.COURSE_NUM = C.COURSE_NUM");
+                            "SELECT C.COURSE_NUM AS COURSE, SECT.QUARTER AS QUARTER, SECT.YEAR AS YEAR, T.UNITS AS UNITS, SECT.SECTION_ID AS SECTION_ID, SECT.FACULTY_NAME AS PROFESSOR FROM STUDENT STD, SECTION SECT, COURSE C, TAKES T WHERE STD.ID = ? AND T.STUDENT_ID = STD.ID AND T.SECTION_ID = SECT.SECTION_ID AND SECT.COURSE_NUM = C.COURSE_NUM");
                         pstmt2.setInt(1, Integer.parseInt(request.getParameter("ID")));
                         rs2 = pstmt2.executeQuery();
 
@@ -112,7 +112,7 @@
             <%-- -------- Iteration Code -------- --%>
             <%
                     // Iterate over the ResultSet        
-                    if ( rs.next() ) {      
+                    if ( columnCount1!=0 ) {      
             %>
                 <table border="0"><th><font face = "Arial Black" size = "6">Student Info</font></th></table>
                 <table border="1">
@@ -128,6 +128,9 @@
                     }
             %>       
                     </tr>    
+            <%
+                    while(rs.next()){
+            %>
                     <tr>
 
                             <%-- Get the ID, which is a number --%>
@@ -155,6 +158,9 @@
                             </td>
 
                     </tr>
+            <%
+                    }
+            %>
                 </table>
             <%
                     }
@@ -195,15 +201,9 @@
                                     name="YEAR" size="15" readonly>
                             </td>
     
-                            <%-- Get the MIN_UNITS --%>
+                            <%-- Get the UNITS --%>
                             <td align="middle" >
-                                <input value="<%= rs2.getString("MIN_UNITS") %>" 
-                                    name="UNITS" size="15" readonly>
-                            </td>
-
-                            <%-- Get the MAX_UNITS --%>
-                            <td align="middle" >
-                                <input value="<%= rs2.getString("MAX_UNITS") %>" 
+                                <input value="<%= rs2.getString("UNITS") %>" 
                                     name="UNITS" size="15" readonly>
                             </td>
 

@@ -15,15 +15,20 @@
     
             <%-- -------- Open Connection Code -------- --%>
             <%
+                Connection conn = null;
+                Statement statement = null;
+                Statement statement2 = null;
+                ResultSet rs = null;
+                ResultSet courses = null;
                 try {
                     // Load Oracle Driver class file
                     DriverManager.registerDriver
                         (new com.microsoft.sqlserver.jdbc.SQLServerDriver());
     
                     // Make a connection to the Oracle datasource "cse132b"
-                    Connection conn = DriverManager.getConnection
-                        ("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
-                            "sa", "Ding8374");
+                    conn = DriverManager.getConnection
+					("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
+						"sa", "Ding8374");
 
             %>
 
@@ -103,19 +108,19 @@
             <%-- -------- SELECT Statement Code -------- --%>
             <%
                     // Create the statement
-                    Statement statement = conn.createStatement();
+                    statement = conn.createStatement();
 
                     // Use the created statement to SELECT
                     // the faculty attributes FROM the FACULTY table.
-                    ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM TAKEN, SECTION, COURSE WHERE TAKEN.SECTION_ID = SECTION.SECTION_ID AND SECTION.COURSE_NUM = COURSE.COURSE_NUM");
+                    rs = statement.executeQuery
+                        ("SELECT T.STUDENT_ID AS STUDENT_ID, CL.TITLE AS TITLE, S.SECTION_ID AS SECTION_ID, T.GRADE AS GRADE, T.UNITS AS UNITS FROM TAKEN T, SECTION S, COURSE C, CLASS CL WHERE T.SECTION_ID = S.SECTION_ID AND S.COURSE_NUM = C.COURSE_NUM AND S.QUARTER = CL.QUARTER AND S.YEAR = CL.YEAR AND S.COURSE_NUM = CL.COURSE_NUM");
 
                    //ResultSet rs = statement.executeQuery
                    //     ("SELECT * FROM TAKEN");
 
 
-                    Statement statement2 = conn.createStatement();
-                    ResultSet courses = statement2.executeQuery("SELECT * FROM COURSE");
+                    statement2 = conn.createStatement();
+                    courses = statement2.executeQuery("SELECT C.COURSE_NUM AS COURSE_NUM, CL.TITLE AS TITLE FROM COURSE C, CLASS CL, WHERE C.COURSE_NUM = CL.COURSE_NUM");
             %>
 
             <!-- Add an HTML table header row to format the results -->
@@ -171,13 +176,13 @@
                             <%-- Get the COURSE_NUM, which is a number --%>
                             
                             <td align="middle">
-                                <input value="<%= rs.getInt("COURSE_NUM") %> <%= rs.getString("TITLE") %>" 
+                                <input value="<%= rs.getString("COURSE_NUM") %> <%= rs.getString("TITLE") %>" 
                                     name="COURSE_NUM" size="10" readonly>
                             </td>
     
                             <%-- Get the SECTION_ID, which is a number --%>
                             <td align="middle">
-                                <input value="<%= rs.getString("SECTION_ID") %>" 
+                                <input value="<%= rs.getInt("SECTION_ID") %>" 
                                     name="SECTION_ID" size="10" readonly>
                             </td>
 
@@ -217,20 +222,29 @@
 
             <%-- -------- Close Connection Code -------- --%>
             <%
-                    // Close the ResultSet
-                    rs.close();
-                    courses.close();
-    
-                    // Close the Statement
-                    statement.close();
-                    statement2.close();
-    
-                    // Close the Connection
-                    conn.close();
+
                 } catch (SQLException sqle) {
                     out.println(sqle.getMessage());
                 } catch (Exception e) {
                     out.println(e.getMessage());
+                } finally{
+                    // Close the ResultSet
+                    if (rs!=null)
+                        rs.close();
+
+                    if (courses!=null)
+                        courses.close();
+    
+                    // Close the Statement
+                    if(statement!=null)
+                        statement.close();
+
+                    if(statement2!=null)
+                        statement.close();
+    
+                    // Close the Connection
+                    if(conn!=null)
+                        conn.close();
                 }
             %>
                 </table>

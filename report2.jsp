@@ -46,7 +46,7 @@
 						pstmt.setInt(1, id);
 						ResultSet rs = pstmt.executeQuery();
 						%>
-						<table border="0"><th><font face = "Arial Black" size = "4">STUDENT <%= request.getParameter("ID")%> conflits with the following sections</font></th></table>
+						<table border="0"><th><font face = "Monospace" size = "6">STUDENT <%= request.getParameter("ID")%> conflits with the following sections</font></th></table>
 						<%
 						//get each section info from MEETING table
 						while(rs.next()){
@@ -374,11 +374,11 @@
 							ResultSet conflict_rs = conflict.executeQuery();
 						%>
 						
-						<table border="1">
+						<table border="0">
 						<%
 							while (conflict_rs.next()) {      
 						%>
-								<tr>
+								<tr style="border-bottom: thin solid;">
 									<td align="middle">
 											<input value="<%= conflict_rs.getInt("SECTION_ID") %>" 
 												name="tempSECTION_ID" size="2" readonly>

@@ -32,7 +32,7 @@
                 int columnCount4 = 0;
                 int columnCount2 = 0;
                 int columnCount1 = 0;
-                int columnCount = 0;
+                int columnCount3 = 0;
                 try {
                     // Load Oracle Driver class file
                     DriverManager.registerDriver
@@ -40,8 +40,8 @@
     
                     // Make a connection to the Oracle datasource "cse132b"
                     conn = DriverManager.getConnection
-                        ("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
-                            "sa", "Ding8374");
+					("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
+						"sa", "Ding8374");
 
 
             %>
@@ -69,7 +69,7 @@
                         // Use the created statement to SELECT
                         // the student attributes FROM the Student table.
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "SELECT SUM(Q.UNITS_NEEDED) AS UNITS_NEEDED FROM (SELECT C.NAME AS CATEGORY_NAME, MAX(C.MIN_UNITS) AS REQ_UNITS, SUM(NEST.UNITS) AS UNITS_DONE, CASE WHEN MAX(C.MIN_UNITS) - SUM(NEST.UNITS) <= 0 THEN 0 ELSE MAX(C.MIN_UNITS) - SUM(NEST.UNITS) END AS UNITS_NEEDED FROM DEPARTMENT D, CATEGORIES C JOIN (SELECT T.SECTION_ID AS SECTION_ID, T.STUDENT_ID AS STUDENT_ID, T.GRADE AS GRADE, T.UNITS AS UNITS, S.COURSE_NUM AS COURSE_NUM FROM TAKEN T JOIN SECTION S ON (T.SECTION_ID = S.SECTION_ID) WHERE T.GRADE IN ('A+','A','A-','B+','B','B-','C+','C','C-') AND T.STUDENT_ID = ? UNION SELECT S.SECTION_ID AS SECTION_ID, ?, 'F', 0, S.COURSE_NUM FROM SECTION S) NEST ON (C.COURSE_NUM = NEST.COURSE_NUM) WHERE D.DEPT_NAME = C.DEPT_NAME AND D.DEPT_NAME = ? GROUP BY C.NAME) Q");
+                            "SELECT SUM(Q.UNITS_NEEDED) AS UNITS_NEEDED FROM (SELECT C.NAME AS CATEGORY_NAME, MAX(C.MIN_UNITS) AS REQ_UNITS, SUM(NEST.UNITS) AS UNITS_DONE, CASE WHEN MAX(C.MIN_UNITS) - SUM(NEST.UNITS) <= 0 THEN 0 ELSE MAX(C.MIN_UNITS) - SUM(NEST.UNITS) END AS UNITS_NEEDED FROM DEPARTMENT D, CATEGORIES C JOIN (SELECT T.SECTION_ID AS SECTION_ID, T.STUDENT_ID AS STUDENT_ID, T.GRADE AS GRADE, T.UNITS AS UNITS, S.COURSE_NUM AS COURSE_NUM FROM TAKEN T JOIN SECTION S ON (T.SECTION_ID = S.SECTION_ID) WHERE T.GRADE IN ('A+','A','A-','B+','B','B-','C+','C','C-','D') AND T.STUDENT_ID = ? UNION SELECT S.SECTION_ID AS SECTION_ID, ?, 'F', 0, S.COURSE_NUM FROM SECTION S) NEST ON (C.COURSE_NUM = NEST.COURSE_NUM) WHERE D.DEPT_NAME = C.DEPT_NAME AND D.DEPT_NAME = ? GROUP BY C.NAME) Q");
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("ID")));
                         pstmt.setInt(2, Integer.parseInt(request.getParameter("ID")));
                         pstmt.setString(3, request.getParameter("DEGREE"));
@@ -77,7 +77,24 @@
                         rsmd1 = rs.getMetaData();
                         columnCount1 = rsmd1.getColumnCount();                 
                         
-                        
+                        PreparedStatement conc_completed = conn.prepareStatement(
+                            "SELECT UNITS.CONCENTRATION_NAME FROM (SELECT C.NAME AS CONCENTRATION_NAME, MAX(C.MIN_UNITS) AS REQ_UNITS, SUM(NEST.UNITS) AS UNITS_DONE, CASE WHEN MAX(C.MIN_UNITS) - SUM(NEST.UNITS) <= 0 THEN 0 ELSE MAX(C.MIN_UNITS) - SUM(NEST.UNITS) END AS UNITS_NEEDED FROM DEPARTMENT D, CONCENTRATION C JOIN (SELECT T.SECTION_ID AS SECTION_ID, T.STUDENT_ID AS STUDENT_ID, T.GRADE AS GRADE, T.UNITS AS UNITS, S.COURSE_NUM AS COURSE_NUM FROM TAKEN T JOIN SECTION S ON (T.SECTION_ID = S.SECTION_ID) WHERE T.GRADE IN ('A+','A','A-','B+','B','B-','C+','C','C-','D','S','U') AND T.STUDENT_ID = ? UNION SELECT S.SECTION_ID AS SECTION_ID, ?, 'F', 0, S.COURSE_NUM FROM SECTION S) NEST ON (C.COURSE_NUM = NEST.COURSE_NUM) WHERE D.DEPT_NAME = C.DEPT_NAME AND D.DEPT_NAME = ? GROUP BY C.NAME) UNITS, (SELECT C.NAME AS CONCENTRATION_NAME, SUM(NEST.NUM_GRADE)/COUNT(NEST.NUM_GRADE) AS AVG_GPA, MAX(C.MIN_GPA) AS MIN_GPA FROM DEPARTMENT D, CONCENTRATION C JOIN (SELECT T.SECTION_ID AS SECTION_ID, T.STUDENT_ID AS STUDENT_ID, T.GRADE AS LETTER_GRADE, GC.NUMBER_GRADE AS NUM_GRADE, T.UNITS AS UNITS, S.COURSE_NUM AS COURSE_NUM FROM GRADE_CONVERSION GC, TAKEN T JOIN SECTION S ON (T.SECTION_ID = S.SECTION_ID) WHERE T.GRADE IN ('A+','A','A-','B+','B','B-','C+','C','C-','D','F') AND T.GRADE = GC.LETTER_GRADE AND T.STUDENT_ID = ?) NEST ON (C.COURSE_NUM = NEST.COURSE_NUM) WHERE D.DEPT_NAME = C.DEPT_NAME AND D.DEPT_NAME = ? GROUP BY C.NAME) GPA WHERE UNITS.CONCENTRATION_NAME = GPA.CONCENTRATION_NAME AND UNITS.UNITS_NEEDED = 0 AND GPA.AVG_GPA > GPA.MIN_GPA");
+                        conc_completed.setInt(1, Integer.parseInt(request.getParameter("ID")));
+                        conc_completed.setInt(2, Integer.parseInt(request.getParameter("ID")));
+                        conc_completed.setString(3, request.getParameter("DEGREE"));
+                        conc_completed.setInt(4, Integer.parseInt(request.getParameter("ID")));
+                        conc_completed.setString(5, request.getParameter("DEGREE"));
+                        rs2 = conc_completed.executeQuery();
+                        rsmd2 = rs2.getMetaData();
+                        columnCount3 = rsmd2.getColumnCount(); 
+
+                        PreparedStatement conc_offerings = conn.prepareStatement(
+                        "SELECT C.NAME AS CONCENTRATION_NAME, C.COURSE_NUM AS COURSE_NUM, S.QUARTER AS QUARTER, S.YEAR AS YEAR FROM CONCENTRATION C JOIN (SELECT DISTINCT S.COURSE_NUM AS COURSE_NUM, S.QUARTER AS QUARTER, S.YEAR AS YEAR FROM SECTION S, SECTION S2, TAKES T WHERE T.SECTION_ID = S2.SECTION_ID AND ((S.YEAR >= 2016 AND S.QUARTER != 'Winter') OR (S.YEAR>=2017))) S ON (C.COURSE_NUM = S.COURSE_NUM) WHERE C.DEPT_NAME = ? AND C.COURSE_NUM NOT IN ( SELECT S.COURSE_NUM FROM TAKEN T, SECTION S WHERE T.STUDENT_ID = ? AND T.SECTION_ID = S.SECTION_ID AND T.GRADE IN ('A+','A','A-','B+','B','B-','C+','C','C-','D','S')) ORDER BY S.YEAR ASC, CASE WHEN S.QUARTER = 'Winter' THEN 1 WHEN S.QUARTER = 'Spring' THEN 2 WHEN S.QUARTER = 'Fall' THEN 3 END");
+                        conc_offerings.setString(1, request.getParameter("DEGREE"));
+                        conc_offerings.setInt(2, Integer.parseInt(request.getParameter("ID")));
+                        rs4 = conc_offerings.executeQuery();
+                        rsmd4 = rs4.getMetaData();
+                        columnCount4 = rsmd4.getColumnCount();
 
                         // Commit transaction
                         conn.commit();
@@ -90,7 +107,7 @@
                 student = statement2.executeQuery("SELECT DISTINCT S.ID AS ID, S.FIRSTNAME AS FIRSTNAME, S.MIDDLENAME AS MIDDLENAME, S.LASTNAME AS LASTNAME FROM STUDENT S WHERE S.ENROLL = 'Yes' AND S.ID IN (SELECT GRAD_ID FROM GRAD)");
 
                 statement3 = conn.createStatement();
-                degree = statement3.executeQuery("SELECT DEPT_NAME AS NAME FROM DEPARTMENT T");
+                degree = statement3.executeQuery("SELECT T.DEPT_NAME AS NAME FROM DEPARTMENT T WHERE T.DEPT_NAME LIKE '%M._.%' ");
 
             %>
 
@@ -137,7 +154,7 @@
                     // Iterate over the ResultSet        
                     if ( columnCount2 !=0 ) {      
             %>
-                <table border="0"><th><font face = "Arial Black" size = "6">Units Needed in Concentration Info</font></th></table>
+                <table border="0"><th><font face = "Arial Black" size = "6">Units Needed in Category Info</font></th></table>
                 <table border="1">
                     <tr>
             <%
@@ -213,8 +230,85 @@
                 </table>
             <%
                     }
+                    if( columnCount3 != 0){ 
             %>
+                <table border="0"><th><font face = "Arial Black" size = "6">Concentrations Completed</font></th></table>
+                <table border="1">
+                    <tr>
+            <%
+                int k = 0;
+                String name = null;
+                for ( k = 1; k <= columnCount3; k++ ) {
+                        name = rsmd2.getColumnName(k);
+            %>
+                        <th>
+                            <%= name %>
+                        </th>
+            <%
+                    }
+            %>       
+                    </tr>
+            <%   
+                while(rs2.next() ){
+            %> 
+                    <tr>
+            <%     
                 
+                    for (k = 1; k <= columnCount3; k++){
+                    name = rsmd2.getColumnName(k);
+            %>
+                    <td align="middle"> <input value="<%= rs2.getString(name) %>" 
+                    name="<%= rs2.getString(name) %>" size="15" readonly></td>
+            <%
+                    }
+            %>
+                    </tr>
+            <%
+                }
+            %>
+                </table>
+            <%
+                }
+                if(columnCount4 != 0){
+            %>
+                 <table border="0"><th><font face = "Arial Black" size = "6">Next Concentration Course Offering</font></th></table>
+                <table border="1">
+                    <tr>
+            <%
+                int m = 0;
+                String name11 = null;
+                for ( m = 1; m <= columnCount4; m++ ) {
+                        name11 = rsmd4.getColumnName(m);
+            %>
+                        <th>
+                            <%= name11 %>
+                        </th>
+            <%
+                    }
+            %>       
+                    </tr>
+            <%   
+                while(rs4.next() ){
+            %> 
+                    <tr>
+            <%     
+                
+                    for (m = 1; m <= columnCount4; m++){
+                    name11 = rsmd4.getColumnName(m);
+            %>
+                    <td align="middle"> <input value="<%= rs4.getString(name11) %>" 
+                    name="<%= rs4.getString(name11) %>" size="15" readonly></td>
+            <%
+                    }
+            %>
+                    </tr>
+            <%
+                }
+            %>
+                </table>
+            <%
+                }
+            %>
 
             <%-- -------- Close Connection Code -------- --%>
             <%

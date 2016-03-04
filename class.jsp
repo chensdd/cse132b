@@ -85,7 +85,7 @@
                     // Use the created statement to SELECT
                     // the student attributes FROM the Student table.
                     ResultSet rs = statement.executeQuery
-                        ("SELECT * FROM CLASS");
+                        ("SELECT * FROM CLASS ORDER BY YEAR ASC, QUARTER ASC, COURSE_NUM ASC");
             %>
 
             <!-- Add an HTML table header row to format the results -->

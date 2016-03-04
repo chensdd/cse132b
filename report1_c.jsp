@@ -38,8 +38,8 @@
     
                     // Make a connection to the Oracle datasource "cse132b"
                     conn = DriverManager.getConnection
-                        ("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
-                            "sa", "Ding8374");
+					("jdbc:sqlserver://DOUBLED\\SQLEXPRESS:1433;databaseName=cse132b", 
+						"sa", "Ding8374");
 
 
             %>
@@ -65,7 +65,7 @@
                         // Use the created statement to SELECT
                         // the student attributes FROM the Student table.
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "SELECT S.QUARTER AS QUARTER, S.YEAR AS YEAR, CL.COURSE_NUM AS COURSE_NUM, CL.TITLE AS TITLE, T.GRADE AS GRADE, T.UNITS AS UNITS FROM SECTION S, TAKEN T, STUDENT ST, CLASS CL WHERE ST.ID = ? AND ST.ID = T.STUDENT_ID AND T.SECTION_ID = S.SECTION_ID AND S. QUARTER = CL.QUARTER AND S.YEAR = CL.YEAR AND S.COURSE_NUM = CL.COURSE_NUM ORDER BY S.QUARTER, S.YEAR");
+                            "SELECT S.QUARTER AS QUARTER, S.YEAR AS YEAR, CL.COURSE_NUM AS COURSE_NUM, CL.TITLE AS TITLE, T.GRADE AS GRADE, T.UNITS AS UNITS FROM SECTION S, TAKEN T, STUDENT ST, CLASS CL WHERE ST.ID = ? AND ST.ID = T.STUDENT_ID AND T.SECTION_ID = S.SECTION_ID AND CL.COURSE_NUM = S.COURSE_NUM ORDER BY S.QUARTER, S.YEAR");
                         pstmt.setInt(1, Integer.parseInt(request.getParameter("ID")));
                         rs = pstmt.executeQuery();
                         rsmd1 = rs.getMetaData();
@@ -128,7 +128,7 @@
             <%-- -------- Iteration Code -------- --%>
             <%
                     // Iterate over the ResultSet        
-                    if ( rs3.next() ) {      
+                    if ( columnCount2!=0 ) {      
             %>
                 <table border="0"><th><font face = "Arial Black" size = "6">Student Info</font></th></table>
                 <table border="1">
@@ -148,6 +148,7 @@
                     </tr>
                     <tr>    
             <%
+                    while(rs3.next()){
                     for (l = 1; l <= columnCount2; l++){
                     name4 = rsmd3.getColumnName(l);
             %>
@@ -155,6 +156,7 @@
                     name="<%= rs3.getString(name4) %>" size="15" readonly></td>
             <%
                     }
+                }
             %>
                     </tr>
                 </table>

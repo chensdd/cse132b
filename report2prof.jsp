@@ -45,7 +45,7 @@
   
 						ResultSet rs = pstmt.executeQuery();			
 						%>
-						<table border="0"><th><font face = "Arial Black" size = "4">Available Time for Review Session <%= request.getParameter("SECTION_ID")%></font></th></table>
+						<table border="0"><th><font face = "Monospace" size = "6">Available Time for Review Session <%= request.getParameter("SECTION_ID")%></font></th></table>
 						<%
 						//loop for each student who takes this section
 						while(rs.next()){
