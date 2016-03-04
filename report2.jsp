@@ -39,22 +39,14 @@
 						empty.executeUpdate();
 						conn.commit();						
 					
-						PreparedStatement pstmt = conn.prepareStatement("SELECT ID FROM STUDENT WHERE SSN = ?");
-						pstmt.setInt(1, Integer.parseInt(request.getParameter("SSN_NUM")));
-  
-						ResultSet rs = pstmt.executeQuery();
-                        
-						//get student ID
-						int id = 0;
-						if(rs.next())
-							id = rs.getInt(1);
-						
+						int id = Integer.parseInt(request.getParameter("ID"));
+							
 						//get Section_ID and Class_type from TAKES table for that particular student
-						pstmt = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE FROM TAKES WHERE STUDENT_ID = ?");
-						pstmt.setInt(1, Integer.parseInt(request.getParameter("SSN_NUM")));
-						rs = pstmt.executeQuery();
+						PreparedStatement pstmt = conn.prepareStatement("SELECT SECTION_ID, CLASS_TYPE FROM TAKES WHERE STUDENT_ID = ?");
+						pstmt.setInt(1, id);
+						ResultSet rs = pstmt.executeQuery();
 						%>
-						<table border="0"><th><font face = "Arial Black" size = "4">STUDENT <%= request.getParameter("SSN_NUM")%> conflits with the following sections</font></th></table>
+						<table border="0"><th><font face = "Arial Black" size = "4">STUDENT <%= request.getParameter("ID")%> conflits with the following sections</font></th></table>
 						<%
 						//get each section info from MEETING table
 						while(rs.next()){
@@ -424,7 +416,7 @@
                     // Use the created statement to SELECT
                     // the student attributes FROM the Student table.
                     ResultSet rs = statement.executeQuery
-                        ("SELECT DISTINCT STUDENT.SSN, STUDENT.FIRSTNAME, STUDENT.MIDDLENAME, STUDENT.LASTNAME FROM STUDENT INNER JOIN TAKES ON STUDENT.ID = TAKES.STUDENT_ID");
+                        ("SELECT DISTINCT STUDENT.ID, STUDENT.FIRSTNAME, STUDENT.MIDDLENAME, STUDENT.LASTNAME FROM STUDENT INNER JOIN TAKES ON STUDENT.ID = TAKES.STUDENT_ID");
             %>
 
             <!-- Add an HTML table header row to format the results -->
@@ -433,21 +425,21 @@
 					<form action="report2.jsp" method="get">
 						<input type="hidden" value="choose" name="action">
 					<tr>
-						<th>Student SSN</th>	
+						<th>Student ID</th>	
 						<th>
-							<input type="text" value = "" name="SSN_NUM" size="10">							
+							<input type="text" value = "" name="ID" size="10">							
 						</th>											
 
 					    <%-- Button --%>
                             <td>
-                                <input type="submit" name="choose" value="Submit">
+                                <input type="submit" name="choose" value="Select">
                             </td>
 					</form>
 					</tr>
 				</table>
 				<table border="1">	
                     <tr>
-                        <th>Student SSN</th>
+                        <th>Student ID</th>
 						<th>First Name</th>
 						<th>Middle Name</th>
                         <th>Last Name</th>
@@ -460,10 +452,10 @@
             %>
                     <tr>
 
-						<%-- Get the SSN, which is a number --%>
+						<%-- Get the ID, which is a number --%>
 						<td align="middle">
-							<input value="<%= rs.getInt("SSN") %>" 
-								name="SSN" size="10" readonly>
+							<input value="<%= rs.getInt("ID") %>" 
+								name="S_ID" size="10" readonly>
 						</td>
 
 
