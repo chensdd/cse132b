@@ -236,7 +236,7 @@
 								String maxSize = "--";
 								if(rs.getString("CLASS_TYPE").contains("LEC")){
 									int secID = rs.getInt("SECTION_ID");
-									PreparedStatement cntQuery = conn.prepareStatement("SELECT COUNT(STUDENT_ID) FROM TAKES WHERE SECTION_ID = ?");
+									PreparedStatement cntQuery = conn.prepareStatement("SELECT COUNT(DISTINCT STUDENT_ID) FROM TAKES WHERE SECTION_ID = ?");
 									cntQuery.setInt(1, secID);
 									ResultSet cntRs = cntQuery.executeQuery();
 									int seats = 0;

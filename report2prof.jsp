@@ -60,10 +60,7 @@
 								if(stempRS.getString("MONDAY") != null){
 									int sh = stempRS.getInt("START_H");
 									int eh = stempRS.getInt("END_H");
-									int em = stempRS.getInt("END_M");
-									
-									if(stempRS.getString("START_AMPM").equals("PM") && sh != 12)
-										sh = sh + 12;
+									int em = stempRS.getInt("END_M");									
 									
 									PreparedStatement query = conn.prepareStatement("INSERT INTO NOTPOSSIBLE_TEMP VALUES (?, ?)");
 									query.setString(1, "Mon");
@@ -81,10 +78,7 @@
 								if(stempRS.getString("TUESDAY") != null){
 									int sh = stempRS.getInt("START_H");
 									int eh = stempRS.getInt("END_H");
-									int em = stempRS.getInt("END_M");
-									
-									if(stempRS.getString("START_AMPM").equals("PM") && sh != 12)
-										sh = sh + 12;
+									int em = stempRS.getInt("END_M");									
 									
 									PreparedStatement query = conn.prepareStatement("INSERT INTO NOTPOSSIBLE_TEMP VALUES (?, ?)");
 									query.setString(1, "Tue");
@@ -104,9 +98,6 @@
 									int eh = stempRS.getInt("END_H");
 									int em = stempRS.getInt("END_M");
 									
-									if(stempRS.getString("START_AMPM").equals("PM") && sh != 12)
-										sh = sh + 12;
-									
 									PreparedStatement query = conn.prepareStatement("INSERT INTO NOTPOSSIBLE_TEMP VALUES (?, ?)");
 									query.setString(1, "Wed");
 									query.setInt(2, sh);
@@ -125,9 +116,6 @@
 									int eh = stempRS.getInt("END_H");
 									int em = stempRS.getInt("END_M");
 									
-									if(stempRS.getString("START_AMPM").equals("PM") && sh != 12)
-										sh = sh + 12;
-									
 									PreparedStatement query = conn.prepareStatement("INSERT INTO NOTPOSSIBLE_TEMP VALUES (?, ?)");
 									query.setString(1, "Thu");
 									query.setInt(2, sh);
@@ -144,10 +132,7 @@
 								if(stempRS.getString("FRIDAY") != null){
 									int sh = stempRS.getInt("START_H");
 									int eh = stempRS.getInt("END_H");
-									int em = stempRS.getInt("END_M");
-									
-									if(stempRS.getString("START_AMPM").equals("PM") && sh != 12)
-										sh = sh + 12;
+									int em = stempRS.getInt("END_M");									
 									
 									PreparedStatement query = conn.prepareStatement("INSERT INTO NOTPOSSIBLE_TEMP VALUES (?, ?)");
 									query.setString(1, "Fri");

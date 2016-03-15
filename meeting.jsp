@@ -35,12 +35,12 @@
                     if (action != null && action.equals("insert")) {
 
                         // Begin transaction
-                        conn.setAutoCommit(false);
+                        conn.setAutoCommit(false);	
                         
                         // Create the prepared statement and use it to
                         // INSERT the faculty attributes INTO the FACULTY table.
                         PreparedStatement pstmt = conn.prepareStatement(
-                            "INSERT INTO MEETING VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            "INSERT INTO MEETING_TEMP VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 						
 						//String checkedValue = "";	
 						//String[] days = request.getParameterValues("day_list");
@@ -92,10 +92,18 @@
 						pstmt.setString(11, request.getParameter("Th"));
 						pstmt.setString(12, request.getParameter("F"));
 						
-						pstmt.setInt(13, Integer.parseInt(request.getParameter("start_h")));
+						int sh = Integer.parseInt(request.getParameter("start_h"));
+						int eh = Integer.parseInt(request.getParameter("end_h"));
+						String shampm = request.getParameter("start_ampm");
+						String ehampm = request.getParameter("end_ampm");
+						if(shampm.equals("PM") && sh != 12)
+							sh = sh + 12;
+						if(ehampm.equals("PM") && eh != 12)
+							eh = eh + 12;
+						pstmt.setInt(13, sh);
 						pstmt.setInt(14, Integer.parseInt(request.getParameter("start_m")));
 						pstmt.setString(15, request.getParameter("start_ampm"));
-						pstmt.setInt(16, Integer.parseInt(request.getParameter("end_h")));
+						pstmt.setInt(16, eh);
 						pstmt.setInt(17, Integer.parseInt(request.getParameter("end_m")));
 						pstmt.setString(18, request.getParameter("end_ampm"));
 						
@@ -117,6 +125,14 @@
 						classType = classType + "" + cnt;
 						pstmt.setString(23, classType);
 						
+						String fname = "";
+						PreparedStatement fQuery = conn.prepareStatement("SELECT DISTINCT FACULTY_NAME FROM SECTION WHERE SECTION.SECTION_ID = ?");
+						fQuery.setInt(1, secID);
+						ResultSet fRs = fQuery.executeQuery();
+						if(fRs.next())
+							fname = fRs.getString(1);
+						pstmt.setString(24, fname);
+					
                         int rowCount = pstmt.executeUpdate();
 
                         //Commit transaction
@@ -230,6 +246,7 @@
 							<option>LEC</option>
 							<option>DIS</option>
 							<option>LAB</option>
+							<option>REV</option>
 							</select></th>
 							</th>
                             <th><input value = "" name="BUILDING" size="15"></th>

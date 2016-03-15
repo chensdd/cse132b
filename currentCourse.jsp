@@ -15,6 +15,8 @@
     
             <%-- -------- Open Connection Code -------- --%>
             <%
+            	ResultSetMetaData rsmd1 = null;
+            	int columnCount1 = 0;
                 try {
                     // Load Oracle Driver class file
                     DriverManager.registerDriver
@@ -45,6 +47,9 @@
 					    query.setInt(1, Integer.parseInt(year));
 					    query.setString(2, quarter);
 					    rs = query.executeQuery();
+
+					    rsmd1 = rs.getMetaData();
+                        columnCount1 = rsmd1.getColumnCount();
 						
 						//Commit transaction
                         conn.commit();
@@ -96,7 +101,7 @@
 				</table>
 				
 			<%
-				if(rs.next()){						
+				if(columnCount1 !=0 ){						
 			%>
 				<table border="1">	
                     <tr>
